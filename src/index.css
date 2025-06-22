@@ -1,0 +1,24 @@
+@import url('./brand.css');
+
+
+/* For the route component */
+.route {
+    width: 100%;
+    max-width: 28.125rem;
+    min-width: 15.625rem;
+    margin: auto;
+    padding: 0rem 0.625rem;
+}
+
+/* For the spinner component */
+.route--spinner {
+    animation: spin 1s steps(8) 0s infinite;
+}
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
