@@ -2,15 +2,15 @@ import { FaClipboardQuestion, FaCircleQuestion } from 'react-icons/fa6'
 
 function SubPermNotGrant({ text, handleRequest }) {
   return (
-    <div className="dashboard--summary__perm-not-granted">
-        <FaClipboardQuestion className='dashboard--summary__perm-not-granted-icon'/>
+    <div className="sub-perm-not-granted">
+        <FaClipboardQuestion className='sub-perm-not-granted__icon'/>
 
-        <span className="dashboard--summary__perm-not-granted-text">
+        <span className="sub-perm-not-granted__text">
             { text }
         </span>
 
-        <button className="dashboard--summary__perm-not-granted-btn" onClick={ handleRequest }>
-            <FaCircleQuestion className='dashboard--summary__perm-not-granted-btn-icon'/>
+        <button className="sub-perm-not-granted__btn" onClick={ handleRequest }>
+            <FaCircleQuestion className='sub-perm-not-granted__btn-icon'/>
 
             grant access
         </button>

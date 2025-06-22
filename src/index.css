@@ -11,7 +11,7 @@
 }
 
 /* For the spinner component */
-.route--spinner {
+.spinner {
     animation: spin 1s steps(8) 0s infinite;
 }
 @keyframes spin {
@@ -21,4 +21,177 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+
+/* For the summary-data, sub-loader, sub-error and  components */
+.summary-data,
+.sub-loader {
+    height: 100%;
+    width: 100%;
+    background-color: var(--brand-black);
+    border-radius: 8px;
+}
+.summary-data {
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+.summary-data__display-icon,
+.summary-data__location-icon {
+    fill: var(--brand-white);
+}
+.summary-data__display-icon {
+    font-size: 7rem;
+    transition: .8s;
+}
+.summary-data__display-icon:hover {
+    transform: scale(1.2);
+}
+.summary-data__info {
+    color: var(--brand-white);
+    display: flex;
+    flex-direction: column;
+}
+.summary-data__location {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    text-transform: capitalize;
+    gap: 5px;
+}
+.summary-data__location-icon {
+    font-size: 1rem;
+    display: block;
+}
+.summary-data__location,
+.summary-data__temperature,
+.summary-data__description {
+    color: var(--brand-white);
+}
+.summary-data__temperature {
+    font-size: 5rem;
+    font-weight: 600;
+}
+.summary-data__description {
+    text-transform: capitalize;
+    font-size: 1.3rem;
+    font-weight: 550;
+}
+.sub-loader,
+.sub-error,
+.sub-perm-not-granted {
+    padding: 40px;
+    background-color: var(--brand-black);
+    border-radius: 8px;
+}
+.sub-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 40px;
+}
+.sub-loader__icon,
+.sub-error__icon,
+.sub-perm-not-granted__icon {
+    fill: var(--brand-white);
+    font-size: 2rem ;
+}
+.sub-loader__text,
+.sub-perm-not-granted__text,
+.sub-error__text {
+    color: var(--brand-white);
+    font-size: 1.2rem;
+    text-transform: capitalize;
+    text-align: center;
+}
+.sub-error,
+.sub-perm-not-granted {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+.sub-error__btn,
+.sub-perm-not-granted__btn {
+    background-color: var(--brand-white);
+    color: var(--brand-black);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.15rem;
+    text-transform: capitalize;
+    font-weight: 600;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+.sub-error__btn-icon,
+.sub-perm-not-granted__btn-icon {
+    fill: var(--brand-black);
+    display: block;
+}
+
+
+.forecast-data__date-filters {
+    list-style: none;
+    width: 100%;
+    overflow: auto;
+    scrollbar-width: none;
+    scrollbar-color: var(--brand-black);
+}
+.forecast-data__date-filters-track {
+    width: max-content;
+}
+.forecast-data__date-filter {
+    float: left;
+    padding: 8px 15px;
+    margin-right: 10px;
+    border-radius: 8px;
+    background-color: var(--brand-pale-white);
+    color: var(--brand-black);
+    text-transform: capitalize;
+    transition: 0.3s;
+}
+.forecast-data__date-filter:hover {
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+}
+.forecast-data__predictions {
+    margin-top: 15px;
+    list-style: none;
+}
+.forecast-data__prediction {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 20px 15px;
+    border-top: 2px solid var(--brand-black);
+}
+.forecast-data__prediction:hover {
+    background-color: var(--brand-black);
+}
+.forecast-data__prediction:hover * {
+    fill: var(--brand-white);
+    color: var(--brand-white);
+}
+.forecast-data__prediction-icon {
+    font-size: 2.5rem;
+    display: block;
+}
+.forecast-data__prediction-text {
+    font-size: 1.5rem;
+    margin-right: auto;
+    font-weight: 600;
+}
+.forecast-data__prediction-sub-text {
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.forecast-data__prediction-time {
+    font-size: 1.1rem;
 }

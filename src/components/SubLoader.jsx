@@ -2,10 +2,10 @@ import Spinner from "./Spinner"
 
 function SubLoader({ text }) {
   return (
-    <div className="dashboard--summary__loader">
-        <Spinner className='dashboard--summary__loader-icon'/>
+    <div className="sub-loader">
+        <Spinner className='sub-loader__icon'/>
 
-        <div className="dashboard--summary__loader-text">
+        <div className="sub-loader__text">
             { text }
         </div>
     </div>
