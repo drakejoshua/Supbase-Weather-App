@@ -24,7 +24,7 @@
 }
 
 
-/* For the summary-data, sub-loader, sub-error and  components */
+/* For the summary-data, sub-loader, sub-error and forcast-data components */
 .summary-data,
 .sub-loader {
     height: 100%;
@@ -134,8 +134,6 @@
     fill: var(--brand-black);
     display: block;
 }
-
-
 .forecast-data__date-filters {
     list-style: none;
     width: 100%;
@@ -194,4 +192,65 @@
 }
 .forecast-data__prediction-time {
     font-size: 1.1rem;
+}
+
+
+
+/* Overlay Styles */
+.dialog__overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.3s ease;
+}
+/* Dialog Content Styles */
+.dialog__content {
+  background: var(--brand-black);
+  border-radius: 12px;
+  padding: 36px 24px;
+  max-width: 400px;
+  width: 100%;
+  min-width: 250px;
+  width: fit-content;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  color: var(--brand-white);
+  transform: translate(-50%, -50%);
+  animation: scaleIn 0.3s ease;
+  box-sizing: border-box;
+}
+/* Topbar with Close Button */
+.dialog__topbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+/* Close Button */
+.dialog__close-btn {
+  background: transparent;
+  border: none;
+  display: block;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--brand-white);
+  transition: color 0.2s ease;
+}
+/* Dialog Title */
+.dialog__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: var(--brand-white);
+}
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
