@@ -29,7 +29,7 @@ function Signup() {
     <div className='signup'>
       {/* signin form */}
       <Form.Root className='signup--form' onSubmit={ handleFormSubmit }>
-        <FormLogo/>
+        <FormLogo className="signup--form__logo"/>
 
         <h1 className="signup--form__heading">
           sign up

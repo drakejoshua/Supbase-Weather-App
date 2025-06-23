@@ -221,6 +221,10 @@
   animation: scaleIn 0.3s ease;
   box-sizing: border-box;
 }
+.dialog__content * {
+    color: var(--brand-white);
+    fill: var(--brand-white);
+}
 /* Topbar with Close Button */
 .dialog__topbar {
   display: flex;
@@ -240,10 +244,11 @@
 /* Dialog Title */
 .dialog__title {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 1rem;
   text-align: center;
   color: var(--brand-white);
+  text-transform: capitalize;
 }
 /* Animations */
 @keyframes fadeIn {
@@ -305,7 +310,6 @@
     font-size: 1.5rem;
     font-weight: 600;
     width: fit-content;
-    margin-right: auto;
 }
 .form-logo__icon {
     display: block;

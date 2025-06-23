@@ -11,6 +11,9 @@
     min-width: 15.625rem;
     overflow: auto;
 }
+.signup--form__logo {
+    margin-right: auto;
+}
 
 .signup--form__heading {
     text-transform: capitalize;

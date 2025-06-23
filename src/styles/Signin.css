@@ -10,6 +10,9 @@
     min-width: 15.625rem;
     overflow: auto;
 }
+.signin--form__logo {
+    margin-right: auto;
+}
 
 
 .signin--form__heading {

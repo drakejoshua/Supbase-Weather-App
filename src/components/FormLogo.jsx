@@ -1,8 +1,8 @@
 import { FaCloudSunRain } from 'react-icons/fa6'
 
-function FormLogo() {
+function FormLogo({ className, ...props }) {
   return (
-    <div className="form-logo">
+    <div className={`form-logo ${ className }`} { ...props }>
         <FaCloudSunRain className='form-logo__icon'/>
 
         InstaWeather
