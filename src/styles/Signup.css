@@ -1,0 +1,115 @@
+.signup {
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    overflow: auto;
+}
+.signup--form {
+    width: 30%;
+    padding: 3.125rem 1.875rem;
+    max-width: 31.25rem;
+    min-width: 15.625rem;
+    overflow: auto;
+}
+
+.signup--form__heading {
+    text-transform: capitalize;
+    margin-top: 3.75rem;
+}
+.signup--form__field-group {
+    display: flex;
+    gap: 0.9375rem;
+    flex-direction: column;
+    margin-top: 1.25rem;
+}
+.signup--form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+.signup--form__label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.signup--form__message {
+    display: flex;
+    gap: 0.625rem;
+    align-items: center;
+}
+.signup--form__message-icon {
+    display: block;
+}
+.signup--form__input {
+    padding: 0.625rem 1.25rem;
+    outline: none;
+    border: 0.125rem solid var(--brand-black);
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+}
+.signup--form__password-ctn {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    border: 0.125rem solid var(--brand-black);
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+}
+.signup--form__password-input {
+    flex-grow: 1;
+    font-size: 1.2rem;
+    outline: none;
+    border: none;
+}
+.signup--form__password-toggle {
+    font-size: 1.5rem;
+}
+.signup--form__password-icon {
+    display: block;
+}
+.signup--form__forgot-password-text {
+    text-align: right;
+    display: block;
+    margin-top: 1.25rem;
+    text-transform: capitalize;
+}
+.signup--form__submit-btn {
+    padding: 0.625rem 1.25rem;
+    width: 100%;
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    margin-top: 0.9375rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+.signup-form__signin-link {
+    display: block;
+    text-align: center;
+    margin-top: 25px;
+    text-transform: capitalize;
+}
+.signup--form__social-ctn {
+    margin-top: 25px;
+    display: flex;
+    gap: 0.9375rem;
+    flex-direction: column;
+}
+
+.signup--form__submit-content {
+    color: var(--brand-white);
+    text-transform: capitalize;
+    text-align: center;
+}
+
+@media screen and ( max-width: 68.75rem ) {
+    .signup--form__carousel {
+        display: none;
+    }
+    .signup--form {
+        width: 100%;
+    }
+}

@@ -1,10 +1,10 @@
 import React from 'react'
 import { FaTwitter } from 'react-icons/fa6'
 
-function TwitterSocialBtn() {
+function TwitterSocialBtn({ text }) {
   return (
     <button type='button' className='social-btn'>
-        <FaTwitter className='social-btn__icon'/> sign in with twitter
+        <FaTwitter className='social-btn__icon'/> { text }
     </button>
   )
 }

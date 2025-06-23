@@ -8,14 +8,19 @@
     padding: 3.125rem 1.875rem;
     max-width: 31.25rem;
     min-width: 15.625rem;
+    overflow: auto;
 }
 
 
+.signin--form__heading {
+    text-transform: capitalize;
+    margin-top: 3.75rem;
+}
 .signin--form__field-group {
     display: flex;
     gap: 0.9375rem;
     flex-direction: column;
-    margin-top: 2.5rem;
+    margin-top: 1.25rem;
 }
 .signin--form__field {
     display: flex;
@@ -69,7 +74,7 @@
     margin-top: 1.25rem;
     text-transform: capitalize;
 }
-.sigin--form__submit-btn {
+.signin--form__submit-btn {
     padding: 0.625rem 1.25rem;
     width: 100%;
     background-color: var(--brand-black);
@@ -81,8 +86,14 @@
     border-radius: 0.375rem;
     cursor: pointer;
 }
+.signin-form__signup-link {
+    display: block;
+    text-align: center;
+    margin-top: 25px;
+    text-transform: capitalize;
+}
 .signin--form__social-ctn {
-    margin-top: 2.8125rem;
+    margin-top: 25px;
     display: flex;
     gap: 0.9375rem;
     flex-direction: column;

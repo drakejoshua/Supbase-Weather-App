@@ -6,6 +6,8 @@ import FormLogo from '../components/FormLogo'
 import FormCarousel from '../components/FormCarousel'
 import GoogleSocialBtn from '../components/GoogleSocialBtn'
 import TwitterSocialBtn from '../components/TwitterSocialBtn'
+import { Link } from 'react-router-dom'
+
 
 function Signin() {
   const { showDialog } = useDialogProvider();
@@ -27,6 +29,10 @@ function Signin() {
       {/* signin form */}
       <Form.Root className='signin--form' onSubmit={ handleFormSubmit }>
         <FormLogo/>
+
+        <h1 className="signin--form__heading">
+          sign in
+        </h1>
 
         <div className="signin--form__field-group">
           {/* email */}
@@ -79,16 +85,20 @@ function Signin() {
         </span>
 
 
-        <Form.Submit className='sigin--form__submit-btn'>
+        <Form.Submit className='signin--form__submit-btn'>
           sign in
         </Form.Submit>
 
+        <span className="signin-form__signup-link">
+          Don't have an account? <Link to='/signup'> signup </Link>
+        </span>
+
         <div className='signin--form__social-ctn'>
           {/* google social sign-in button */}
-          <GoogleSocialBtn/>
+          <GoogleSocialBtn text="sign in with google"/>
           
           {/* twitter social sign-in button */}
-          <TwitterSocialBtn/>
+          <TwitterSocialBtn text="sign in with twitter"/>
         </div>
       </Form.Root>
 
