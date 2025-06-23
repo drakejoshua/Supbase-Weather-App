@@ -4,6 +4,8 @@ import '../styles/Signin.css'
 import { useDialogProvider } from '../providers/DialogProvider'
 import FormLogo from '../components/FormLogo'
 import FormCarousel from '../components/FormCarousel'
+import GoogleSocialBtn from '../components/GoogleSocialBtn'
+import TwitterSocialBtn from '../components/TwitterSocialBtn'
 
 function Signin() {
   const { showDialog } = useDialogProvider();
@@ -83,19 +85,15 @@ function Signin() {
 
         <div className='signin--form__social-ctn'>
           {/* google social sign-in button */}
-          <button type='button' className='signin--form__social-btn'>
-            <FaGoogle className='signin--form__social-btn-icon'/> sign in with google
-          </button>
+          <GoogleSocialBtn/>
           
           {/* twitter social sign-in button */}
-          <button type='button' className='signin--form__social-btn'>
-            <FaTwitter className='signin--form__social-btn-icon'/> sign in with twitter
-          </button>
+          <TwitterSocialBtn/>
         </div>
       </Form.Root>
 
       {/* signin carousel */}
-      <FormCarousel/>
+      <FormCarousel className={'signin--form__carousel'}/>
     </div>
   )
 }

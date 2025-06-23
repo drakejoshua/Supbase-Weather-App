@@ -3,7 +3,7 @@ import sample_img_1 from '../assets/sample_img_1.jpg'
 import sample_img_2 from '../assets/sample_img_2.jpg'
 import sample_img_3 from '../assets/sample_img_3.jpg'
 
-function FormCarousel() {
+function FormCarousel({ className, ...props }) {
     const carouselTrackRef = useRef();
     const carouselRef = useRef();
 
@@ -32,7 +32,7 @@ function FormCarousel() {
     }, [])
     
   return (
-    <div className="form--carousel" ref={ carouselRef }>
+    <div className={`form--carousel ${ className }`} ref={ carouselRef } { ...props }>
         <div className="form--carousel__track" ref={ carouselTrackRef }>
           <div className="form--carousel__item">
             <img src={ sample_img_1 } alt="image of a meeting" className="form--carousel__item-image" />
