@@ -10,6 +10,60 @@
     padding: 0rem 0.625rem;
 }
 
+.route-loader {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.route-loader__icon {
+    font-size: 1.8rem;
+    display: block;
+}
+.route-loader__text {
+    font-size: 1.3rem;
+    text-transform: capitalize;
+}
+.route-error {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+.route-error__icon {
+    font-size: 4rem;
+    display: block;
+}
+.route-error__text {
+    text-transform: capitalize;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+.route-error__retry-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+    border-radius: 8px;
+}
+.route-error__retry-icon {
+    font-size: 1.5rem;
+    display: block;
+    fill: var(--brand-white);
+}
+.route-error__retry-text {
+    color: var(--brand-white);
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+
 /* For the spinner component */
 .spinner {
     animation: spin 1s steps(8) 0s infinite;

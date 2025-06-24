@@ -1,7 +1,10 @@
 import '../styles/Favourites.css'
 import Topbar from '../components/Topbar'
-import { FaHeart, FaLocationDot, FaRegHeart } from 'react-icons/fa6'
+import Spinner from '../components/Spinner'
+import { FaClipboardQuestion, FaHeart, FaLinkSlash, FaLocationDot, FaRegHeart, FaRotateRight, FaTriangleExclamation } from 'react-icons/fa6'
 import { useDialogProvider } from '../providers/DialogProvider'
+import RouteLoader from '../components/RouteLoader'
+import RouteError from '../components/RouteError'
 
 function Favourites() {
   const { showDialog, hideDialog } = useDialogProvider()
@@ -27,6 +30,10 @@ function Favourites() {
 
   return (
     <div className='route'>
+      {/* <RouteError text="there was an error" handleRetry={() => {}}/> */}
+
+      {/* <RouteLoader text='loading page...'/> */}
+
       <div className="favourites">
         <Topbar/>
 
@@ -34,7 +41,15 @@ function Favourites() {
           your favourites
         </h1>
 
-        <ul className="favourites--list">
+        <div className="favourites--no-favourites">
+          <FaClipboardQuestion className="favourites--no-favourites__icon"/>
+          
+          <p className="favourites--no-favourites__text">
+            you have not added any favourites yet
+          </p>
+        </div>
+
+        {/* <ul className="favourites--list">
           <li className="favourites--list__favourite">
             <div className="favourites--list__favourite-icon-ctn">
               <FaLocationDot className='favourites--list__favourite-icon'/>
@@ -52,7 +67,7 @@ function Favourites() {
 
             <button className="favourites--list__favourite-toggle-btn button-hover" onClick={ promptReomveFavourite }>
               <FaHeart className='favourites--list__favourite-btn-icon'/>
-              {/* <FaRegHeart className='favourites--list__favourite-btn-icon'/> */}
+              <FaRegHeart className='favourites--list__favourite-btn-icon'/>
             </button>
           </li>
           
@@ -73,7 +88,7 @@ function Favourites() {
 
             <button className="favourites--list__favourite-toggle-btn">
               <FaHeart className='favourites--list__favourite-btn-icon'/>
-              {/* <FaRegHeart className='favourites--list__favourite-btn-icon'/> */}
+              <FaRegHeart className='favourites--list__favourite-btn-icon'/>
             </button>
           </li>
           
@@ -94,10 +109,10 @@ function Favourites() {
 
             <button className="favourites--list__favourite-toggle-btn">
               <FaHeart className='favourites--list__favourite-btn-icon'/>
-              {/* <FaRegHeart className='favourites--list__favourite-btn-icon'/> */}
+              <FaRegHeart className='favourites--list__favourite-btn-icon'/>
             </button>
           </li>
-        </ul>
+        </ul> */}
       </div>
     </div>
   )

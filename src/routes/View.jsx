@@ -13,6 +13,10 @@ function View() {
 
   return (
     <div className="route">
+      {/* <RouteLoader text="loading weather data.."/> */}
+
+      {/* <RouteError text="error loading data"/> */}
+
       <div className="view">
         <Topbar/>
 

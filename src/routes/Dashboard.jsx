@@ -8,6 +8,8 @@ import SubLoader from '../components/SubLoader'
 import SubError from '../components/SubError'
 import SubPermNotGrant from '../components/SubPermNotGrant'
 import ForecastData from '../components/ForecastData'
+import RouteLoader from '../components/RouteLoader'
+import RouteError from '../components/RouteError'
 
 
 function Dashboard() {
@@ -18,6 +20,10 @@ function Dashboard() {
   return (
     // dashboard route container
     <div className="route">
+      {/* <RouteLoader text="loading dashboard.."/> */}
+
+      {/* <RouteError text="error loading dashboard"/> */}
+
       <div className="dashboard">
         {/* dashboard navbar */}
         <nav className="dashboard--navbar">

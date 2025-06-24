@@ -9,7 +9,7 @@ function SubError({ text, handleRetry }) {
             { text }
         </span>
 
-        <button className="sub-error__btn" onClick={ handleRetry }>
+        <button className="sub-error__btn button-hover" onClick={ handleRetry }>
             <FaRotateRight className='sub-error__btn-icon'/>
 
             retry

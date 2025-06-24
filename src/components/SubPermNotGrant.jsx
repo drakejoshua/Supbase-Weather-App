@@ -9,7 +9,7 @@ function SubPermNotGrant({ text, handleRequest }) {
             { text }
         </span>
 
-        <button className="sub-perm-not-granted__btn" onClick={ handleRequest }>
+        <button className="sub-perm-not-granted__btn button-hover" onClick={ handleRequest }>
             <FaCircleQuestion className='sub-perm-not-granted__btn-icon'/>
 
             grant access
