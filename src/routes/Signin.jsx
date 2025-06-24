@@ -85,7 +85,7 @@ function Signin() {
         </span>
 
 
-        <Form.Submit className='signin--form__submit-btn'>
+        <Form.Submit className='signin--form__submit-btn button-hover'>
           sign in
         </Form.Submit>
 

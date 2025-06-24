@@ -1,6 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Dashboard from './routes/Dashboard'
-import AuthOnboarding from './routes/Auth-Onboarding'
 import Favourites from './routes/Favourites'
 import ForgotPassword from './routes/Forgot-Password'
 import Signin from './routes/Signin'
@@ -14,10 +13,6 @@ export const Routes = createBrowserRouter([
     {
         path: "/",
         element: <Dashboard />
-    },
-    {
-        path: "/auth-onboarding",
-        element: <AuthOnboarding />
     },
     {
         path: "/favourites",

@@ -6,7 +6,7 @@ import { useDialogProvider } from '../providers/DialogProvider'
 
 
 function ForgotPassword() {
-  const { showDialog, hideDialog } = useDialogProvider()
+  const { showDialog } = useDialogProvider()
 
   function handleFormSubmit(e) {
     // prevent form default behaviour
@@ -30,6 +30,10 @@ function ForgotPassword() {
               confirm your email
             </h1>
 
+            <p className="forgot-password--form__text">
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Soluta nemo porro tenetur.
+            </p>
+
             <Form.Field className='forgot-password--form__field'>
               <Form.Label className='forgot-password--form__label'>
                 email:
@@ -44,7 +48,7 @@ function ForgotPassword() {
                 enter your email
               </Form.Message>
 
-              <Form.Submit className='forgot-password--form__submit-btn'>
+              <Form.Submit className='forgot-password--form__submit-btn button-hover'>
                 send recovery email
               </Form.Submit>
             </Form.Field>

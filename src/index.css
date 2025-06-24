@@ -195,6 +195,28 @@
 }
 
 
+/* for the topbar */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--brand-black);
+    padding: 0px 5px 20px;
+}
+.topbar__theme-toggle {
+    cursor: pointer;
+}
+.topbar__return-icon {
+    cursor: pointer;
+}
+.topbar__return-icon,
+.topbar__theme-toggle-icon {
+    fill: var(--brand-black);
+    font-size: 1.5rem;
+    display: block;
+}
+
+
 
 /* Overlay Styles */
 .dialog__overlay {
@@ -220,10 +242,6 @@
   transform: translate(-50%, -50%);
   animation: scaleIn 0.3s ease;
   box-sizing: border-box;
-}
-.dialog__content * {
-    color: var(--brand-white);
-    fill: var(--brand-white);
 }
 /* Topbar with Close Button */
 .dialog__topbar {
@@ -336,4 +354,15 @@
 .social-btn__icon {
     display: block;
     fill: var(--brand-black);
+}
+
+
+/* general button hover interaction */
+.button-hover {
+    outline: 2px solid transparent;
+    outline-offset: 3px;
+    transition: 0.3s;
+}
+.button-hover:hover {
+    outline-color: var(--brand-black);
 }

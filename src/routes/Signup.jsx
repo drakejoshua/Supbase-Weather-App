@@ -82,7 +82,7 @@ function Signup() {
         </div>
 
 
-        <Form.Submit className='signup--form__submit-btn'>
+        <Form.Submit className='signup--form__submit-btn button-hover'>
           sign up
         </Form.Submit>
 
