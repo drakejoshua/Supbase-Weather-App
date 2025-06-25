@@ -6,6 +6,7 @@ import ThemeProvider from './providers/ThemeProvider.jsx'
 import DialogProvider from './providers/DialogProvider.jsx'
 import './index.css'
 import ToastProvider from './providers/ToastProvider.jsx'
+import AuthProvider from './providers/AuthProvider.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider>
       <ToastProvider>
         <DialogProvider>
-          <RouterProvider router={ Routes }/>
+          <AuthProvider>
+            <RouterProvider router={ Routes }/>
+          </AuthProvider>
         </DialogProvider>
       </ToastProvider>
     </ThemeProvider>

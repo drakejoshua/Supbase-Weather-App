@@ -10,7 +10,7 @@ export function useToastProvider( content ) {
 
 function ToastProvider({ children }) {
   const [ content, setContent ] = useState({ title: 'my toast'})
-  const [ isToastOpen, setIsToastOpen ] =  useState( true );
+  const [ isToastOpen, setIsToastOpen ] =  useState( false );
 
   const toastProgressBarRef = useRef()
 

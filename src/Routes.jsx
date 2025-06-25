@@ -6,17 +6,22 @@ import Signin from './routes/Signin'
 import Signup from './routes/Signup'
 import View from './routes/View'
 import NotFound from './routes/NotFound'
+import ProtectedRoute from './components/ProtectedRoute'
 
 
 
 export const Routes = createBrowserRouter([
     {
         path: "/",
-        element: <Dashboard />
+        element: <ProtectedRoute>
+                    <Dashboard />
+                </ProtectedRoute>
     },
     {
         path: "/favourites",
-        element: <Favourites />
+        element: <ProtectedRoute>
+                    <Favourites />
+                </ProtectedRoute>
     },
     {
         path: "/forgot-password",
@@ -32,7 +37,9 @@ export const Routes = createBrowserRouter([
     },
     {
         path: "/view",
-        element: <View />
+        element: <ProtectedRoute>
+                    <View />
+                </ProtectedRoute>
     },
     {
         path: "*",
