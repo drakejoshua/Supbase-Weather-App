@@ -88,6 +88,13 @@
     margin-top: 0.9375rem;
     border-radius: 0.375rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.signup--form__submit-btn-spinner {
+    fill: var(--brand-white);
 }
 .signup-form__signin-link {
     display: block;

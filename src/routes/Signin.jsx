@@ -6,22 +6,56 @@ import FormLogo from '../components/FormLogo'
 import FormCarousel from '../components/FormCarousel'
 import GoogleSocialBtn from '../components/GoogleSocialBtn'
 import TwitterSocialBtn from '../components/TwitterSocialBtn'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useAuth } from '../providers/AuthProvider'
 
 
 function Signin() {
+  // react-router navigate function
+  const navigateTo = useNavigate()
+
+  // dialog provider helper function
   const { showDialog } = useDialogProvider();
 
-  function handleFormSubmit(e) {
+  // auth context and helper functions
+  const { signInUsingEmail } = useAuth()
+
+  // input states
+  const [ email, setEmail ] = useState();
+  const [ password, setPassword ] = useState();
+
+  // form states
+  const [ loading, setLoading ] = useState();
+  const [ error, setError ] = useState();
+
+
+  async function handleFormSubmit(e) {
     // prevent default form submission behaviour
     e.preventDefault();
 
-    showDialog({
-      title: 'Incorrect Password',
-      content: <p className='signin--form__submit-content'>
-              The password you entered was incorrect
-            </p>
-    })
+    try {
+      const { success, error } = await signInUsingEmail( email, password );
+
+      if ( success ) {
+        navigateTo('/')
+      } else {
+        switch( error.code ) {
+          case 'email_not_confirmed':
+            showDialog({
+              title: 'Incorrect Password',
+              content: <p className='signin--form__submit-content'>
+                      The password you entered was incorrect
+                    </p>
+            })
+          break;
+        }
+        
+      }
+    } catch {
+      setError()
+    }
+
   }
 
   return (
@@ -42,7 +76,12 @@ function Signin() {
             </Form.Label>
 
             <Form.Control asChild>
-              <input type="email" className='signin--form__input'/>
+              <input type="email" 
+                className='signin--form__input' 
+                value={ email } 
+                onChange={ (e) => setEmail( e.target.value )}
+                autoComplete='email'
+              />
             </Form.Control>
 
             <Form.Message className='signin--form__message'>
@@ -61,7 +100,7 @@ function Signin() {
             <Form.Control asChild>
               <PasswordField.Root asChild>
                 <div className="signin--form__password-ctn">
-                  <PasswordField.Input className='signin--form__password-input'/>
+                  <PasswordField.Input className='signin--form__password-input' value={ password } onChange={ (e) => setPassword( e.target.value )}/>
 
                   <PasswordField.Toggle className='signin--form__password-toggle'>
                     <PasswordField.Icon className='signin--form__password-icon'

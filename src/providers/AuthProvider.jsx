@@ -28,7 +28,10 @@ function AuthProvider({ children }) {
   async function signUpUsingEmail( email, password ) {
     const { data, error } = await supabase.auth.signUp({
         email: email,
-        password: password
+        password: password,
+        options: {
+            emailRedirectTo: `${ window.location.origin }`
+        }
     })
 
     if ( error ) {
@@ -52,7 +55,7 @@ function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
-            emailRedirectTo: `https://${ window.location.hostname }/`
+            emailRedirectTo: `${ window.location.origin }`
         }
     })
   }
@@ -91,7 +94,7 @@ function AuthProvider({ children }) {
     supabase.auth.onAuthStateChange( function( event, session ) {
         setSession( session )
     })
-  })
+  }, [])
 
   return (
     <AuthContext.Provider value={{ 
