@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import supabase from '../providers/SupabaseProvider';
+import { useUserProvider } from './UserProvider';
 
 let AuthContext = createContext();
 
@@ -62,7 +63,10 @@ function AuthProvider({ children }) {
 
   async function signInUsingGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google'
+        provider: 'google',
+        options: {
+          redirectTo: `${ window.location.origin }/auth-continue`
+        }
     })
 
     if ( error ) {
@@ -74,7 +78,10 @@ function AuthProvider({ children }) {
   
   async function signInUsingTwitter() {
     const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'twitter'
+        provider: 'twitter',
+        options: {
+          redirectTo: `${ window.location.origin }/auth-continue`
+        }
     })
 
     if ( error ) {
@@ -86,7 +93,7 @@ function AuthProvider({ children }) {
 
   useEffect( function() {
     // get the current session on mount if any
-    supabase.auth.getSession().then( function( session ) {
+    supabase.auth.getSession().then( function( { data: { session } } ) {
         setSession( session )
     })
 

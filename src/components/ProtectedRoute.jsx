@@ -8,7 +8,6 @@ function ProtectedRoute({ children }) {
   const navigateTo = useNavigate()
 
   useEffect( function() {
-    console.log('user session', session )
     if ( session != "loading" && session == null ) {
         navigateTo('/signin') 
     }

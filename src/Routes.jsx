@@ -7,6 +7,7 @@ import Signup from './routes/Signup'
 import View from './routes/View'
 import NotFound from './routes/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
+import AuthContinue from './routes/AuthContinue'
 
 
 
@@ -26,6 +27,10 @@ export const Routes = createBrowserRouter([
     {
         path: "/forgot-password",
         element: <ForgotPassword />
+    },
+    {
+        path: "/auth-continue",
+        element: <AuthContinue />
     },
     {
         path: "/signin",

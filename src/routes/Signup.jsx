@@ -9,6 +9,7 @@ import TwitterSocialBtn from '../components/TwitterSocialBtn'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuth } from '../providers/AuthProvider'
+import { useUserProvider } from '../providers/UserProvider'
 import Spinner from '../components/Spinner'
 
 
@@ -16,6 +17,9 @@ import Spinner from '../components/Spinner'
 function Signup() {
   // react-router navigate function
   const navigateTo = useNavigate()
+
+  // app's user context and helper functions
+  const { addNewUser } = useUserProvider()
 
   // dialog provider helper function
   const { showDialog } = useDialogProvider();
@@ -41,17 +45,35 @@ function Signup() {
       setError( null )
 
       // request user sign-up using email and password on supabase
-      const { success, error: signUpError } = await signUpUsingEmail( email, password );
+      const { success, error: signUpError, data } = await signUpUsingEmail( email, password );
 
       if ( success ) {
-        // alert user to check for email confirmation
-        showDialog({
-          title: 'Check for email confirmation',
-          content: <p className='signup--form__submit-content'>
-                  we just sent a link to your email, please confirm to finish
-                  creating your account.
-                </p>
+        const { success: addUserSuccess, error: addUserError } = await addNewUser({
+          email: data.user.email
         })
+
+        if ( addUserSuccess ) {
+          // alert user to check for email confirmation
+          showDialog({
+            title: 'Check for email confirmation',
+            content: <p className='signup--form__submit-content'>
+                    we just sent a link to your email, please confirm to finish
+                    creating your account.
+                  </p>
+          })
+        } else {
+          // update form state
+          setError( addUserError );
+
+          // alert user about error 
+          showDialog({
+            title: 'Error during Signup',
+            content: <p className='signup--form__submit-content'>
+              Something went wrong. Please try again or use a different email. Error: { addUserError.code }
+            </p>
+          })
+        }
+
       } else {
         // update form state
         setError( signUpError );
@@ -160,7 +182,7 @@ function Signup() {
         <span className="signup-form__signin-link">
           Already have an account? <Link to='/signin'> signin </Link>
         </span>
-        
+
         <div className='signup--form__social-ctn'>
           {/* google social sign-in button */}
           <GoogleSocialBtn text="sign up with google"/>
