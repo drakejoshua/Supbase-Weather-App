@@ -11,32 +11,34 @@ function UserProvider({ children }) {
   const [ currentLoggedInUser, setCurrentLoggedInUser ] = useState(null)
 
   async function addNewUser( userData ) {
-    const { data, error } = await supabase.from('Users')
-        .insert( userData );
+    const { data: { data }, error } = await supabase.from('Users')
+        .insert( userData )
+        .select()
 
     if ( error ) {
         return { error: error, success: false, data: null }
     }
 
     setCurrentLoggedInUser({
-        email: userData.email,
-        profile_photo_url: userData.profile_photo_url
+        email: data[0].email,
+        profile_photo_url: data[0].profile_photo_url
     })
     return { error: null, success: true, data: data }
   }
 
   async function updateUser( newUserData, user_id ) {
-    const { data, error } = await supabase.from('Users')
+    const { data: { data }, error } = await supabase.from('Users')
         .update( newUserData )
         .eq('user_id', user_id)
+        .select()
 
     if ( error ) {
         return { error: error, success: false, data: null }
     }
 
     setCurrentLoggedInUser({
-        email: newUserData.email,
-        profile_photo_url: newUserData.profile_photo_url
+        email: data[0].email,
+        profile_photo_url: data[0].profile_photo_url
     })
     return { error: null, success: true, data: data }
   }
