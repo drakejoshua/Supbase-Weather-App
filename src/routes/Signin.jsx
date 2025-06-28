@@ -6,7 +6,7 @@ import FormLogo from '../components/FormLogo'
 import FormCarousel from '../components/FormCarousel'
 import GoogleSocialBtn from '../components/GoogleSocialBtn'
 import TwitterSocialBtn from '../components/TwitterSocialBtn'
-import { Link, ServerRouter, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuth } from '../providers/AuthProvider'
 import { useUserProvider } from '../providers/UserProvider'
@@ -174,9 +174,9 @@ function Signin() {
           </Form.Field>
         </div>
 
-        <span className="signin--form__forgot-password-text">
+        <Link className="signin--form__forgot-password-text" to='/forgot-password'>
           forgot password?
-        </span>
+        </Link>
 
 
         <Form.Submit className='signin--form__submit-btn button-hover' disabled={ loading }>

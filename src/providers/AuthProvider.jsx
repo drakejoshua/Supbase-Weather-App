@@ -73,9 +73,16 @@ function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
-            emailRedirectTo: `${ window.location.origin }`
+            emailRedirectTo: `${ window.location.origin }`,
+            shouldCreateUser: false
         }
     })
+
+    if ( error ) {
+      return { success: false, error: error, data: null }
+    }
+    
+    return { success: true, error: error, data: data }
   }
 
   async function signInUsingGoogle() {
