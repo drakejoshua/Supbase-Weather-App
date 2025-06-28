@@ -8,6 +8,7 @@ import View from './routes/View'
 import NotFound from './routes/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
 import AuthContinue from './routes/AuthContinue'
+import EmailConfirmed from './routes/EmailConfirmed'
 
 
 
@@ -31,6 +32,10 @@ export const Routes = createBrowserRouter([
     {
         path: "/auth-continue",
         element: <AuthContinue />
+    },
+    {
+        path: "/email-confirmed",
+        element: <EmailConfirmed />
     },
     {
         path: "/signin",

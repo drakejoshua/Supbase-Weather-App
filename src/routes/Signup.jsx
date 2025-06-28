@@ -25,7 +25,7 @@ function Signup() {
   const { showDialog } = useDialogProvider();
 
   // auth context and helper functions
-  const { signUpUsingEmail, signInUsingGoogle } = useAuth()
+  const { signUpUsingEmail } = useAuth()
 
   // input states
   const [ email, setEmail ] = useState();
@@ -45,35 +45,17 @@ function Signup() {
       setError( null )
 
       // request user sign-up using email and password on supabase
-      const { success, error: signUpError, data } = await signUpUsingEmail( email, password );
+      const { success, error: signUpError } = await signUpUsingEmail( email, password );
 
       if ( success ) {
-        const { success: addUserSuccess, error: addUserError } = await addNewUser({
-          email: data.user.email
+        // alert user to check for email confirmation
+        showDialog({
+          title: 'Check for email confirmation',
+          content: <p className='signup--form__submit-content'>
+                  we just sent a link to your email, please confirm to finish
+                  creating your account.
+                </p>
         })
-
-        if ( addUserSuccess ) {
-          // alert user to check for email confirmation
-          showDialog({
-            title: 'Check for email confirmation',
-            content: <p className='signup--form__submit-content'>
-                    we just sent a link to your email, please confirm to finish
-                    creating your account.
-                  </p>
-          })
-        } else {
-          // update form state
-          setError( addUserError );
-
-          // alert user about error 
-          showDialog({
-            title: 'Error during Signup',
-            content: <p className='signup--form__submit-content'>
-              Something went wrong. Please try again or use a different email. Error: { addUserError.code }
-            </p>
-          })
-        }
-
       } else {
         // update form state
         setError( signUpError );

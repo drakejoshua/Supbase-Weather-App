@@ -6,14 +6,18 @@ import FormLogo from '../components/FormLogo'
 import FormCarousel from '../components/FormCarousel'
 import GoogleSocialBtn from '../components/GoogleSocialBtn'
 import TwitterSocialBtn from '../components/TwitterSocialBtn'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, ServerRouter, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuth } from '../providers/AuthProvider'
+import { useUserProvider } from '../providers/UserProvider'
+import Spinner from '../components/Spinner'
 
 
 function Signin() {
   // react-router navigate function
   const navigateTo = useNavigate()
+
+  const { getUserFromSupabase } = useUserProvider()
 
   // dialog provider helper function
   const { showDialog } = useDialogProvider();
@@ -22,38 +26,89 @@ function Signin() {
   const { signInUsingEmail } = useAuth()
 
   // input states
-  const [ email, setEmail ] = useState();
-  const [ password, setPassword ] = useState();
+  const [ email, setEmail ] = useState("");
+  const [ password, setPassword ] = useState("");
 
   // form states
-  const [ loading, setLoading ] = useState();
-  const [ error, setError ] = useState();
+  const [ loading, setLoading ] = useState( false );
 
 
   async function handleFormSubmit(e) {
     // prevent default form submission behaviour
     e.preventDefault();
 
+    setLoading( true )
+
     try {
-      const { success, error } = await signInUsingEmail( email, password );
+      const { success, error, data } = await signInUsingEmail( email, password );
 
       if ( success ) {
-        navigateTo('/')
+        const { success: getUserSuccess, error: getUserError } = await getUserFromSupabase( data.user.id )
+
+        if ( getUserSuccess ) {
+          navigateTo('/')
+        } else {
+          showDialog({
+              title: 'Error fetching user data',
+              content: <p className='signin--form__dialog-content'>
+                      There was an error fetching your user data. <br />
+                      Error: { getUserError.message }
+                    </p>
+            })
+        }
       } else {
         switch( error.code ) {
           case 'email_not_confirmed':
             showDialog({
-              title: 'Incorrect Password',
-              content: <p className='signin--form__submit-content'>
-                      The password you entered was incorrect
-                    </p>
+              title: 'Your email has not been confirmed',
+              content: <div className='signin--form__dialog-content'>
+                          <p className="signin--form__dialog-text">
+                            you need to confirm your email before you can login
+                          </p>
+
+                          <button className="signin--form__dialog-btn">
+                            send email confirmation
+                          </button>
+                    </div>
             })
           break;
+          
+          case 'invalid_credentials':
+            showDialog({
+              title: 'Incorrect email or password',
+              content: <div className='signin--form__dialog-content'>
+                          <p className="signin--form__dialog-text">
+                            the email or password you entered was incorrect
+                          </p>
+                    </div>
+            })
+          break;
+
+          default:
+            showDialog({
+              title: 'Error signing up',
+              content: <div className='signin--form__dialog-content'>
+                          <p className="signin--form__dialog-text">
+                            there was an error signing you up. <br />
+                            error: { error.code }
+                          </p>
+                    </div>
+            })
         }
         
       }
-    } catch {
-      setError()
+    } catch( err ) {
+      showDialog({
+        title: 'Error signing up',
+        content: <div className='signin--form__dialog-content'>
+                    <p className="signin--form__dialog-text">
+                      there was an error signing you up. <br />
+                      error: { err.code }
+                    </p>
+              </div>
+      })
+    } finally {
+      setLoading( false )
     }
 
   }
@@ -124,8 +179,9 @@ function Signin() {
         </span>
 
 
-        <Form.Submit className='signin--form__submit-btn button-hover'>
-          sign in
+        <Form.Submit className='signin--form__submit-btn button-hover' disabled={ loading }>
+          { loading == false && <> sign in </>}
+          { loading && <> <Spinner className='signin--form__submit-btn-spinner'/> loading.. </>}
         </Form.Submit>
 
         <span className="signin-form__signup-link">

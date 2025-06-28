@@ -31,7 +31,7 @@ function AuthProvider({ children }) {
         email: email,
         password: password,
         options: {
-            emailRedirectTo: `${ window.location.origin }`
+            emailRedirectTo: `${ window.location.origin }/email-confirmed`
         }
     })
 
@@ -40,6 +40,23 @@ function AuthProvider({ children }) {
     }
     
     return { success: true, error: error, data: data }
+  }
+  
+  // sign up using email and password
+  async function resendEmail( type, redirectURL ) {
+    const { error } = await supabase.auth.signUp({
+        email: session.user.email,
+        type: type,
+        options: {
+          emailRedirectTo: redirectURL
+        }
+    })
+
+    if ( error ) {
+        return { success: false, error: error, data: null }
+    }
+    
+    return { success: true, error: error, data: null }
   }
 
   async function signOut() {
@@ -111,7 +128,8 @@ function AuthProvider({ children }) {
         signInUsingGoogle,
         signInUsingTwitter,
         signUpUsingEmail,
-        signOut
+        signOut,
+        resendEmail
     }}>
         { children }
     </AuthContext.Provider>

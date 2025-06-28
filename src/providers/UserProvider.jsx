@@ -11,9 +11,11 @@ function UserProvider({ children }) {
   const [ currentLoggedInUser, setCurrentLoggedInUser ] = useState(null)
 
   async function addNewUser( userData ) {
-    const { data: { data }, error } = await supabase.from('Users')
+    const { data, error } = await supabase.from('Users')
         .insert( userData )
         .select()
+    
+    console.log( data )
 
     if ( error ) {
         return { error: error, success: false, data: null }
@@ -27,7 +29,7 @@ function UserProvider({ children }) {
   }
 
   async function updateUser( newUserData, user_id ) {
-    const { data: { data }, error } = await supabase.from('Users')
+    const { data, error } = await supabase.from('Users')
         .update( newUserData )
         .eq('user_id', user_id)
         .select()
@@ -47,11 +49,17 @@ function UserProvider({ children }) {
     const { data, error } = await supabase.from('Users')
         .select('*')
         .eq('user_id', user_id )
+    console.log('user provider data', data)
+    console.log('user provider error', error)
 
     if ( error  ) {
         return { success: false, error: error, data: null }
     }
 
+    setCurrentLoggedInUser({
+      email: data[0].email,
+      profile_photo_url: data[0].profile_photo_url
+    })
     return { success: true, error: null, data: data }
   }
 

@@ -88,6 +88,13 @@
     margin-top: 0.9375rem;
     border-radius: 0.375rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.signin--form__submit-btn-spinner {
+    fill: var(--brand-white);
 }
 .signin-form__signup-link {
     display: block;
@@ -102,10 +109,18 @@
     flex-direction: column;
 }
 
-.signin--form__submit-content {
+.signin--form__dialog-text {
     color: var(--brand-white);
     text-transform: capitalize;
     text-align: center;
+}
+.signin--form__dialog-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: center;
+    background-color: var(--brand-white);
+    color: var(--brand-black);
 }
 
 @media screen and ( max-width: 68.75rem ) {
