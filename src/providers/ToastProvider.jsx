@@ -4,7 +4,7 @@ import { FaCircleCheck, FaXmark } from 'react-icons/fa6'
 
 let ToastContext = createContext()
 
-export function useToastProvider( content ) {
+export function useToastProvider() {
     return useContext( ToastContext )
 }
 

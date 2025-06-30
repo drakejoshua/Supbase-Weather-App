@@ -2,6 +2,9 @@ import { FaCircleQuestion, FaCircleXmark, FaClipboardQuestion, FaCloudSunRain, F
 import { Avatar, DropdownMenu, Collapsible } from 'radix-ui'
 import '../styles/Dashboard.css'
 import { useThemeProvider } from '../providers/ThemeProvider'
+import { useDialogProvider } from '../providers/DialogProvider'
+import { useToastProvider } from '../providers/ToastProvider'
+import { useAuth } from '../providers/AuthProvider'
 import Spinner from '../components/Spinner'
 import SummaryData from '../components/SummaryData'
 import SubLoader from '../components/SubLoader'
@@ -10,12 +13,41 @@ import SubPermNotGrant from '../components/SubPermNotGrant'
 import ForecastData from '../components/ForecastData'
 import RouteLoader from '../components/RouteLoader'
 import RouteError from '../components/RouteError'
+import { useNavigate }  from 'react-router-dom'
 
 
 function Dashboard() {
 
   // theme state/context
   const { theme, toggleTheme } = useThemeProvider()
+
+  const navigateTo = useNavigate()
+
+  const { signOut } = useAuth()
+
+  const { showDialog } = useDialogProvider()
+  
+  const { showToast } = useToastProvider()
+  
+  async function handleSignOut() {
+    const { success, error } = await signOut()
+
+    if ( success ) {
+      showToast({
+        title: `sign out successful`
+      })
+
+      navigateTo('/signin')
+    } else {
+      showDialog({
+        title: `error signing you out`,
+        content: <p className="dashboard--dialog__content">
+            there was an error signing you out, please try again.
+            Error: { error.message }
+          </p>
+      })
+    }
+  }
 
   return (
     // dashboard route container
@@ -81,7 +113,8 @@ function Dashboard() {
 
                   <DropdownMenu.Separator className="dashboard--navbar__dropdown-separator"/>
 
-                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item dashboard--navbar__dropdown-item--danger">
+                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item dashboard--navbar__dropdown-item--danger"
+                    onClick={handleSignOut}>
                     sign out
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
