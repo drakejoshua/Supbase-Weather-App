@@ -49,3 +49,25 @@ export default function DialogProvider({ children }) {
     </DialogContext.Provider>
   )
 }
+
+
+export function DialogComponent( { title, children, open, handleOpenChange } ) {
+  return <Dialog.Root open={open} onOpenChange={ handleOpenChange }>
+      <Dialog.Portal>
+        <Dialog.Overlay className="dialog__overlay" />
+        <Dialog.Content className="dialog__content">
+          <div className="dialog__topbar">
+            <Dialog.Close asChild>
+              <button className="dialog__close-btn">✖</button>
+            </Dialog.Close>
+          </div>
+
+          <Dialog.Title className='dialog__title'>
+            { title }
+          </Dialog.Title>
+
+          <div>{ children }</div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+}

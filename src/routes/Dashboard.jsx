@@ -1,8 +1,8 @@
-import { FaCircleQuestion, FaCircleXmark, FaClipboardQuestion, FaCloudSunRain, FaListCheck, FaLocationDot, FaLocationPin, FaMagnifyingGlass, FaMoon, FaRegSun, FaRotateRight, FaTriangleExclamation, FaX, FaXmark } from 'react-icons/fa6'
-import { Avatar, DropdownMenu, Collapsible } from 'radix-ui'
+import { FaCircleQuestion, FaCircleXmark, FaClipboardQuestion, FaCloudSunRain, FaListCheck, FaLocationDot, FaLocationPin, FaMagnifyingGlass, FaMoon, FaRegSun, FaRotateRight, FaTriangleExclamation, FaUpload, FaX, FaXmark } from 'react-icons/fa6'
+import { Avatar, DropdownMenu, Collapsible, Form } from 'radix-ui'
 import '../styles/Dashboard.css'
 import { useThemeProvider } from '../providers/ThemeProvider'
-import { useDialogProvider } from '../providers/DialogProvider'
+import { useDialogProvider, DialogComponent } from '../providers/DialogProvider'
 import { useToastProvider } from '../providers/ToastProvider'
 import { useAuth } from '../providers/AuthProvider'
 import Spinner from '../components/Spinner'
@@ -14,12 +14,23 @@ import ForecastData from '../components/ForecastData'
 import RouteLoader from '../components/RouteLoader'
 import RouteError from '../components/RouteError'
 import { useNavigate }  from 'react-router-dom'
+import { useState } from 'react'
+import sample_img_1 from '../assets/sample_img_1'
 
 
 function Dashboard() {
 
+  const [ password, setPassword ] = useState("")
+  const [ email, setEmail ] = useState("")
+
+  const [ passwordDialogOpen, setPasswordDialogOpen ] = useState( false )
+  const [ emailDialogOpen, setEmailDialogOpen ] = useState( false )
+  const [ profilePhotoDialogOpen, setProfilePhotoDialogOpen ] = useState( true )
+
   // theme state/context
   const { theme, toggleTheme } = useThemeProvider()
+
+  const { updateUser } = useAuth()
 
   const navigateTo = useNavigate()
 
@@ -41,12 +52,77 @@ function Dashboard() {
     } else {
       showDialog({
         title: `error signing you out`,
-        content: <p className="dashboard--dialog__content">
+        content: <p className="dashboard--dialog__text">
             there was an error signing you out, please try again.
             Error: { error.message }
           </p>
       })
     }
+  }
+
+  function navigateToFavourites() {
+    navigateTo('/favourites')
+  }
+
+  async function handleUpdatePassword(e) {
+    e.preventDefault()
+
+    const { success, error } = await updateUser({
+      password: password
+    })
+
+    if ( success ) {
+      setPasswordDialogOpen( false )
+      showToast({
+        title: 'Password update successful'
+      })
+    } else {
+      showDialog({
+        title: 'error updating password',
+        content: <p className="dashboard--dialog__text">
+          There was a problem updating your password. 
+          Please try again. <br />
+          Error: { error.message }
+        </p>
+      })
+    }
+  }
+
+  async function handleUpdateEmail(e) {
+    e.preventDefault()
+
+    const { success, error } = await updateUser({
+      email: email
+    })
+
+    if ( success ) {
+      setEmailDialogOpen( false )
+
+      showDialog({
+        title: 'new email confirmation sent',
+        content: <p className="dashboard--dialog__text">
+          A confirmation link has been sent to your new email address.
+          Please confirm your email within 2 minutes to complete the update.
+          The link will expire if not used in time.
+        </p>
+      })
+    } else {
+      showDialog({
+        title: 'error updating email',
+        content: <p className="dashboard--dialog__text">
+          There was a problem updating your email. Please try again.<br />
+          Error: { error.message }
+        </p>
+      })
+    }
+  }
+
+  function showUpdatePasswordDialog() {
+    setPasswordDialogOpen( true )
+  }
+  
+  function showUpdateEmailDialog() {
+    setEmailDialogOpen( true )
   }
 
   return (
@@ -99,15 +175,19 @@ function Dashboard() {
 
                 {/* navbar dropdown content */}
                 <DropdownMenu.Content className="dashboard--navbar__dropdown-content" sideOffset={8} align='end' side='bottom'>
-                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item">
-                    your preferences
+                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item" onClick={ navigateToFavourites }>
+                    favourite locations
                   </DropdownMenu.Item>
 
-                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item">
+                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item" onClick={ null }>
+                    update profile photo
+                  </DropdownMenu.Item>
+
+                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item" onClick={ showUpdateEmailDialog }>
                     update email
                   </DropdownMenu.Item>
 
-                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item">
+                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item" onClick={ showUpdatePasswordDialog }>
                     update password
                   </DropdownMenu.Item>
 
@@ -248,6 +328,92 @@ function Dashboard() {
           {/* <SubPermNotGrant text="you have not granted location access"/> */}
         </div>
       </div>
+
+      {/* update password dialog */}
+      <DialogComponent 
+        title={'update password?'} 
+        open={ passwordDialogOpen}
+        handleOpenChange={ setPasswordDialogOpen }
+      >
+        <div className="dashboard--dialog__content">
+          <p className="dashboard--dialog__text">
+            Enter your new password below. 
+            Make sure it's strong and something you'll remember. 
+          </p>
+
+          <Form.Root className='dashboard--dialog__form' onSubmit={ handleUpdatePassword }>
+            <Form.Field className='dashboard--dialog__form-field'>
+              <Form.Label className='dashboard--dialog__form-label'>
+                new password
+              </Form.Label>
+
+              <Form.Control asChild>
+                <input 
+                  type="text" 
+                  className='dashboard--dialog__form-input'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required 
+                />
+              </Form.Control>
+
+              <Form.Message match="valueMissing" className='dashboard--dialog__form-message'>
+                <FaTriangleExclamation className='dashboard--dialog__form-message-icon'/> you need to provide a password
+              </Form.Message>
+            </Form.Field>
+
+            <Form.Submit className='dashboard--dialog__form-submit-btn button-hover button-hover-white'>
+              update password
+            </Form.Submit>
+          </Form.Root>
+        </div>
+      </DialogComponent>
+
+      {/* update email dialog */}
+      <DialogComponent 
+        title={'update email?'}
+        open={ emailDialogOpen }
+        handleOpenChange={ setEmailDialogOpen }
+      >
+        <div className="dashboard--dialog__content">
+          <p className="dashboard--dialog__text">
+            Enter your new email below. 
+            Make sure it's not the old one and something you'll remember. 
+          </p>
+
+          <Form.Root className='dashboard--dialog__form' onSubmit={ handleUpdateEmail }>
+            <Form.Field className='dashboard--dialog__form-field'>
+              <Form.Label className='dashboard--dialog__form-label'>
+                new email
+              </Form.Label>
+
+              <Form.Control asChild>
+                <input 
+                  type="email" 
+                  className='dashboard--dialog__form-input'
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required 
+                />
+              </Form.Control>
+
+              <Form.Message  match="valueMissing" className='dashboard--dialog__form-message'>
+                <FaTriangleExclamation className='dashboard--dialog__form-message-icon'/>
+                you need to provide a email
+              </Form.Message>
+              
+              <Form.Message  match="typeMismatch" className='dashboard--dialog__form-message'>
+                <FaTriangleExclamation className='dashboard--dialog__form-message-icon'/>
+                please provide a valid email
+              </Form.Message>
+            </Form.Field>
+
+            <Form.Submit className='dashboard--dialog__form-submit-btn button-hover button-hover-white'>
+              update email
+            </Form.Submit>
+          </Form.Root>
+        </div>
+      </DialogComponent>
     </div>
   )
 }

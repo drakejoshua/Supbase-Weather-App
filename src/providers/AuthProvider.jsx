@@ -69,6 +69,16 @@ function AuthProvider({ children }) {
     return { success: true, error: error, data: null }
   }
 
+  async function updateUser( updateData ) {
+    const { data, error } = await supabase.auth.updateUser( updateData )
+
+    if ( error ) {
+      return { success: false, error: error, data: null }
+    }
+
+    return { success: true, error: null, data: data }
+  }
+
   async function signInUsingEmailWithoutPassword( email ) {
     const { data, error } = await supabase.auth.signInWithOtp({
         email: email,
@@ -136,7 +146,8 @@ function AuthProvider({ children }) {
         signInUsingTwitter,
         signUpUsingEmail,
         signOut,
-        resendEmail
+        resendEmail,
+        updateUser
     }}>
         { children }
     </AuthContext.Provider>

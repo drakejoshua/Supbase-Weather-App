@@ -494,3 +494,6 @@
 .button-hover:hover {
     outline-color: var(--brand-black);
 }
+.button-hover-white:hover {
+    outline-color: var(--brand-white);
+}
