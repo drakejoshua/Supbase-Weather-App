@@ -69,7 +69,7 @@ function AuthProvider({ children }) {
     return { success: true, error: error, data: null }
   }
 
-  async function updateUser( updateData ) {
+  async function updateUserAuthData( updateData ) {
     const { data, error } = await supabase.auth.updateUser( updateData )
 
     if ( error ) {
@@ -147,7 +147,7 @@ function AuthProvider({ children }) {
         signUpUsingEmail,
         signOut,
         resendEmail,
-        updateUser
+        updateUserAuthData
     }}>
         { children }
     </AuthContext.Provider>

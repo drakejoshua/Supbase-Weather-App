@@ -14,23 +14,58 @@ import ForecastData from '../components/ForecastData'
 import RouteLoader from '../components/RouteLoader'
 import RouteError from '../components/RouteError'
 import { useNavigate }  from 'react-router-dom'
-import { useState } from 'react'
-import sample_img_1 from '../assets/sample_img_1'
+import { useEffect, useState } from 'react'
+import sample_img_1 from '../assets/sample_img_1.jpg'
+import { useUserProvider } from '../providers/UserProvider'
+import useSupabaseUpload from '../hooks/useSupabaseUpload'
+import supabase from '../providers/SupabaseProvider'
+import Dropzone from 'react-dropzone'
 
 
 function Dashboard() {
+  const { getUserFromSupabase, currentLoggedInUser, updateUser } = useUserProvider()
+  const { session } = useAuth()
 
   const [ password, setPassword ] = useState("")
   const [ email, setEmail ] = useState("")
 
+  function setProfilePhotoLoaded() {
+    setIsProfilePhotoError( false )
+    setIsProfilePhotoLoading( false )
+    setIsProfilePhotoLoaded( true )
+  }
+  function setProfilePhotoLoading() {
+    setIsProfilePhotoError( false )
+    setIsProfilePhotoLoading( true )
+    setIsProfilePhotoLoaded( false )
+  }
+  function setProfilePhotoError() {
+    setIsProfilePhotoError( true )
+    setIsProfilePhotoLoading( false )
+    setIsProfilePhotoLoaded( false )
+  }
+
+  const [ isProfilePhotoLoading, setIsProfilePhotoLoading ] = useState(true)
+  const [ isProfilePhotoError, setIsProfilePhotoError ] = useState(false)
+  const [ isProfilePhotoLoaded, setIsProfilePhotoLoaded ] = useState(false)
+
+  const [ selectedFile, setSelectedFile ] = useState(null);
+
+
   const [ passwordDialogOpen, setPasswordDialogOpen ] = useState( false )
   const [ emailDialogOpen, setEmailDialogOpen ] = useState( false )
-  const [ profilePhotoDialogOpen, setProfilePhotoDialogOpen ] = useState( true )
+  const [ profilePhotoDialogOpen, setProfilePhotoDialogOpen ] = useState( false )
+
+  const [ isPasswordUpdating, setIsPasswordUpdating ] = useState( false )
+  const [ isEmailUpdating, setIsEmailUpdating ] = useState( false )
+  const [ isProfilePhotoUpdating, setIsProfilePhotoUpdating ] = useState( false )
 
   // theme state/context
   const { theme, toggleTheme } = useThemeProvider()
 
-  const { updateUser } = useAuth()
+  const uploadFile = useSupabaseUpload( supabase )
+
+  const { updateUserAuthData } = useAuth()
 
   const navigateTo = useNavigate()
 
@@ -67,53 +102,154 @@ function Dashboard() {
   async function handleUpdatePassword(e) {
     e.preventDefault()
 
-    const { success, error } = await updateUser({
-      password: password
-    })
+    try {
+      setIsPasswordUpdating( true )
 
-    if ( success ) {
-      setPasswordDialogOpen( false )
-      showToast({
-        title: 'Password update successful'
+      const { success, error } = await updateUserAuthData({
+        password: password
       })
-    } else {
+
+      if ( success ) {
+        setPasswordDialogOpen( false )
+        showToast({
+          title: 'Password update successful'
+        })
+      } else {
+        showDialog({
+          title: 'error updating password',
+          content: <p className="dashboard--dialog__text">
+            There was a problem updating your password. 
+            Please try again. <br />
+            Error: { error.message }
+          </p>
+        })
+      }
+    } catch( err ) {
       showDialog({
         title: 'error updating password',
         content: <p className="dashboard--dialog__text">
           There was a problem updating your password. 
           Please try again. <br />
-          Error: { error.message }
+          Error: { err.message }
         </p>
       })
+    } finally {
+      setIsPasswordUpdating( false )
     }
   }
 
   async function handleUpdateEmail(e) {
     e.preventDefault()
 
-    const { success, error } = await updateUser({
-      email: email
-    })
+    try {
+      setIsEmailUpdating( true )
 
-    if ( success ) {
-      setEmailDialogOpen( false )
-
-      showDialog({
-        title: 'new email confirmation sent',
-        content: <p className="dashboard--dialog__text">
-          A confirmation link has been sent to your new email address.
-          Please confirm your email within 2 minutes to complete the update.
-          The link will expire if not used in time.
-        </p>
+      const { success, error } = await updateUserAuthData({
+        email: email
       })
-    } else {
+
+      if ( success ) {
+        const { success: userUpdateSuccess, error: userUpdateError } = await updateUser({
+          email: email
+        })
+
+        if ( userUpdateSuccess ) {
+          setEmailDialogOpen( false )
+    
+          showDialog({
+            title: 'new email confirmation sent',
+            content: <p className="dashboard--dialog__text">
+              A confirmation link has been sent to your new email address.
+              Please confirm your email within 2 minutes to complete the update.
+              The link will expire if not used in time.
+            </p>
+          })
+        } else {
+          showDialog({
+            title: 'error updating email',
+            content: <p className="dashboard--dialog__text">
+              There was a problem updating your email. Please try again.<br />
+              Error: { userUpdateError.message }
+            </p>
+          })
+        }
+      } else {
+        showDialog({
+          title: 'error updating email',
+          content: <p className="dashboard--dialog__text">
+            There was a problem updating your email. Please try again.<br />
+            Error: { error.message }
+          </p>
+        })
+      }
+    } catch( err ) {
       showDialog({
         title: 'error updating email',
         content: <p className="dashboard--dialog__text">
           There was a problem updating your email. Please try again.<br />
-          Error: { error.message }
+          Error: { err.message }
         </p>
       })
+    } finally {
+      setIsEmailUpdating( false )
+    }
+  }
+
+  async function handleUpdateProfilePhoto() {
+    try {
+      setIsProfilePhotoUpdating( true )
+
+      if ( selectedFile ) {
+        const fileExtension =  selectedFile.name.split(".")[selectedFile.name.split(".").length - 1] 
+  
+        const { success, error, publicUrl } = await uploadFile('avatars', `${session.user.id}.${fileExtension}`, selectedFile );
+        console.log('upload success: ', success )
+        console.log('upload error: ', error )
+        console.log('upload public-url: ', publicUrl )
+  
+        if ( success ) {
+          const { success: userUpdateSuccess, error: userUpdateError } = await updateUser({
+            profile_photo_url: publicUrl
+          }, session.user.id )
+          console.log('update success: ', userUpdateSuccess )
+          console.log('update error: ', userUpdateError )
+  
+          if ( userUpdateSuccess ) {
+            showToast({
+              title: 'profile photo updated successfully'
+            })
+  
+            setSelectedFile(null)
+            setProfilePhotoDialogOpen( false )
+          } else {
+            showDialog({
+              title: 'error updating profile photo',
+              content: <p className="dashboard--dialog__text">
+                There was a problem updating your profile photo. Please try again.<br />
+                Error: { userUpdateError.message }
+              </p>
+            })
+          }
+        } else {
+          showDialog({
+            title: 'error updating profile photo',
+            content: <p className="dashboard--dialog__text">
+              There was a problem updating your profile photo. Please try again.<br />
+              Error: { error.message }
+            </p>
+          })
+        }
+      }
+    } catch( err ) {
+      showDialog({
+        title: 'error updating profile photo',
+        content: <p className="dashboard--dialog__text">
+          There was a problem updating your profile photo. Please try again.<br />
+          Error: { err.message }
+        </p>
+      })
+    } finally {
+      setIsProfilePhotoUpdating( false )
     }
   }
 
@@ -124,6 +260,30 @@ function Dashboard() {
   function showUpdateEmailDialog() {
     setEmailDialogOpen( true )
   }
+  
+  function showUpdateProfilePhotoDialog() {
+    setProfilePhotoDialogOpen( true )
+  }
+
+  async function fetchUserData() {
+    const { success, error } = await getUserFromSupabase( session.user.id )
+  }
+
+  useEffect( function() {
+    if ( session != 'loading' && session ) {
+      fetchUserData()
+    }
+  }, [session])
+
+  useEffect( function() {
+    if ( currentLoggedInUser ) {
+      const profilePhotoImage = new Image();
+      profilePhotoImage.src = `${currentLoggedInUser.profile_photo_url}`;
+      profilePhotoImage.onload = setProfilePhotoLoaded
+      profilePhotoImage.onloadstart = setProfilePhotoLoading
+      profilePhotoImage.onerror = setProfilePhotoError
+    }
+  }, [ currentLoggedInUser ])
 
   return (
     // dashboard route container
@@ -156,18 +316,18 @@ function Dashboard() {
 
                 {/* navbar avatar */}
                 <Avatar.Root className="dashboard--navbar__avatar">
-                  <Avatar.Image 
-                    src='https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
+                  { isProfilePhotoLoaded && <Avatar.Image 
+                    src={ currentLoggedInUser.profile_photo_url }
                     className="dashboard--navbar__avatar-image"
-                  />
+                  /> }
 
-                  {/* <Spinner className="dashboard--navbar__avatar-loader-icon"/> */}
+                  { isProfilePhotoLoading && <Spinner className="dashboard--navbar__avatar-loader-icon"/>}
 
-                  {/* <FaTriangleExclamation className="dashboard--navbar__avatar-error-icon"/> */}
+                  { isProfilePhotoError && <FaTriangleExclamation className="dashboard--navbar__avatar-error-icon"/>}
 
-                  {/* <Avatar.Fallback delayMs={1500} className="dashboard--navbar__avatar-fallback">
+                  { isProfilePhotoLoaded && <Avatar.Fallback delayMs={1500} className="dashboard--navbar__avatar-fallback">
                     JB
-                  </Avatar.Fallback> */}
+                  </Avatar.Fallback>}
                 </Avatar.Root>
               </DropdownMenu.Trigger>
 
@@ -179,7 +339,7 @@ function Dashboard() {
                     favourite locations
                   </DropdownMenu.Item>
 
-                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item" onClick={ null }>
+                  <DropdownMenu.Item className="dashboard--navbar__dropdown-item" onClick={ showUpdateProfilePhotoDialog }>
                     update profile photo
                   </DropdownMenu.Item>
 
@@ -362,8 +522,9 @@ function Dashboard() {
               </Form.Message>
             </Form.Field>
 
-            <Form.Submit className='dashboard--dialog__form-submit-btn button-hover button-hover-white'>
-              update password
+            <Form.Submit className='dashboard--dialog__form-submit-btn button-hover button-hover-white' disabled={ isPasswordUpdating }>
+              { !isPasswordUpdating && <>update password</>}
+              { isPasswordUpdating && <> <Spinner/> loading.. </>}
             </Form.Submit>
           </Form.Root>
         </div>
@@ -408,10 +569,64 @@ function Dashboard() {
               </Form.Message>
             </Form.Field>
 
-            <Form.Submit className='dashboard--dialog__form-submit-btn button-hover button-hover-white'>
-              update email
+            <Form.Submit className='dashboard--dialog__form-submit-btn button-hover button-hover-white' disabled={ isEmailUpdating }>
+              { !isEmailUpdating && <>update email</>}
+              { isEmailUpdating && <> <Spinner/> loading.. </>}
             </Form.Submit>
           </Form.Root>
+        </div>
+      </DialogComponent>
+
+      {/* update profile photo dialog */}
+      <DialogComponent 
+        title="update profile photo?"
+        open={ profilePhotoDialogOpen }
+        handleOpenChange={ setProfilePhotoDialogOpen }
+      >
+        <div className="dashboard--dialog__content">
+          <p className="dashboard--dialog__text">
+            Choose a new profile photo to represent you. 
+            Make sure it's clear and appropriate. 
+            Your photo helps personalize your account.
+          </p>
+
+          { !selectedFile && <Dropzone 
+            onDrop={function( acceptedFiles ) {
+              setSelectedFile( acceptedFiles[0] )
+            }} 
+            accept={{'image/*':[]}} 
+            maxSize={2 * 1024 * 1024} 
+            multiple={false}
+          >
+            {
+              function({ getInputProps, getRootProps, isDragActive, isDragReject }) {
+                return <div 
+                          className="dashboard--dialog__dropzone" 
+                          {...getRootProps()}
+                          data-drag-active={ isDragActive }
+                          data-drag-reject={ isDragReject }
+                        >
+                          <input {...getInputProps()}/>
+
+                          <FaUpload className='dashboard--dialog__dropzone-icon'/>
+
+                          <span className="dashboard--dialog__dropzone-text">
+                            { !isDragReject && <>Drag & drop an image here, or click to select a file.( Max: 2MB )</>}
+                            { isDragReject && <>unsupported file, drag an image file, or click to select a file( Max: 2MB )</>}
+                          </span>
+                        </div>
+              }
+            }
+          </Dropzone> }
+
+          { selectedFile && <div className="dashboard--dialog__photo-preview">
+            <img src={ URL.createObjectURL( selectedFile ) } alt="" className="dashboard--dialog__preview-image" />
+          </div>}
+
+          <button className="dashboard--dialog__upload-btn button-hover-white" onClick={ handleUpdateProfilePhoto }  disabled={ isProfilePhotoUpdating }>
+            { !isProfilePhotoUpdating && <>upload photo</>}
+            { isProfilePhotoUpdating && <> <Spinner/> loading.. </>}
+          </button>
         </div>
       </DialogComponent>
     </div>

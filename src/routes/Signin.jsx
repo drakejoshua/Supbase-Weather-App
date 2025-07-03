@@ -40,22 +40,10 @@ function Signin() {
     setLoading( true )
 
     try {
-      const { success, error, data } = await signInUsingEmail( email, password );
+      const { success, error } = await signInUsingEmail( email, password );
 
       if ( success ) {
-        const { success: getUserSuccess, error: getUserError } = await getUserFromSupabase( data.user.id )
-
-        if ( getUserSuccess ) {
-          navigateTo('/')
-        } else {
-          showDialog({
-              title: 'Error fetching user data',
-              content: <p className='signin--form__dialog-content'>
-                      There was an error fetching your user data. <br />
-                      Error: { getUserError.message }
-                    </p>
-            })
-        }
+        navigateTo('/')
       } else {
         switch( error.code ) {
           case 'email_not_confirmed':

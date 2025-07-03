@@ -8,7 +8,7 @@ export function useUserProvider() {
 }
 
 function UserProvider({ children }) {
-  const [ currentLoggedInUser, setCurrentLoggedInUser ] = useState(null)
+  const [ currentLoggedInUser, setCurrentLoggedInUser ] = useState({})
 
   async function addNewUser( userData ) {
     const { data, error } = await supabase.from('Users')
@@ -49,8 +49,6 @@ function UserProvider({ children }) {
     const { data, error } = await supabase.from('Users')
         .select('*')
         .eq('user_id', user_id )
-    console.log('user provider data', data)
-    console.log('user provider error', error)
 
     if ( error  ) {
         return { success: false, error: error, data: null }
