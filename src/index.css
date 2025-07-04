@@ -207,6 +207,12 @@
     color: var(--brand-black);
     text-transform: capitalize;
     transition: 0.3s;
+    cursor: pointer;
+    user-select: none;
+}
+.forecast-data__date-filter.active {
+    background-color: var(--brand-black);
+    color: var(--brand-white);
 }
 .forecast-data__date-filter:hover {
     background-color: var(--brand-black);

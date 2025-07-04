@@ -15,7 +15,6 @@ import RouteLoader from '../components/RouteLoader'
 import RouteError from '../components/RouteError'
 import { useNavigate }  from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import sample_img_1 from '../assets/sample_img_1.jpg'
 import { useUserProvider } from '../providers/UserProvider'
 import useSupabaseUpload from '../hooks/useSupabaseUpload'
 import supabase from '../providers/SupabaseProvider'
@@ -26,8 +25,10 @@ function Dashboard() {
   const { getUserFromSupabase, currentLoggedInUser, updateUser } = useUserProvider()
   const { session } = useAuth()
 
+
   const [ password, setPassword ] = useState("")
   const [ email, setEmail ] = useState("")
+
 
   function setProfilePhotoLoaded() {
     setIsProfilePhotoError( false )
@@ -44,21 +45,34 @@ function Dashboard() {
     setIsProfilePhotoLoading( false )
     setIsProfilePhotoLoaded( false )
   }
-
   const [ isProfilePhotoLoading, setIsProfilePhotoLoading ] = useState(true)
   const [ isProfilePhotoError, setIsProfilePhotoError ] = useState(false)
   const [ isProfilePhotoLoaded, setIsProfilePhotoLoaded ] = useState(false)
 
+
+  
   const [ selectedFile, setSelectedFile ] = useState(null);
-
-
   const [ passwordDialogOpen, setPasswordDialogOpen ] = useState( false )
   const [ emailDialogOpen, setEmailDialogOpen ] = useState( false )
   const [ profilePhotoDialogOpen, setProfilePhotoDialogOpen ] = useState( false )
 
+
   const [ isPasswordUpdating, setIsPasswordUpdating ] = useState( false )
   const [ isEmailUpdating, setIsEmailUpdating ] = useState( false )
   const [ isProfilePhotoUpdating, setIsProfilePhotoUpdating ] = useState( false )
+
+  // route-level state
+  const [ isRouteLoading, setIsRouteLoading ] = useState( true )
+  const [ routeError, setRouteError ] = useState(null)
+
+
+  // component-level state
+  const [ isGeolocationGranted, setIsGeolocationGranted ] = useState( false )
+  const [ weatherData, setWeatherData ] = useState(null)
+  const [ weatherForecastData, setWeatherForecastData ] = useState(null)
+  const [ weatherError, setWeatherError ] = useState( null )
+  const [ isWeatherDataLoading, setIsWeatherDataLoading ] = useState( false )
+
 
   // theme state/context
   const { theme, toggleTheme } = useThemeProvider()
@@ -266,7 +280,110 @@ function Dashboard() {
   }
 
   async function fetchUserData() {
-    const { success, error } = await getUserFromSupabase( session.user.id )
+    try {
+      setIsRouteLoading( true )
+      
+      const { success, error } = await getUserFromSupabase( session.user.id )
+
+      if ( success ) {
+        checkGeolocationPermission()
+      } else {
+        setRouteError( error )
+      }
+    } catch( err ) {
+      setRouteError( err )
+    } finally {
+      setIsRouteLoading( false )
+    }
+  }
+
+  async function checkGeolocationPermission() {
+    if ( !navigator.permissions ) {
+      setIsGeolocationGranted( false )
+    }
+
+    try {
+      const status = await navigator.permissions.query({ name: 'geolocation'})
+
+      if ( status.state == 'granted' ) {
+        setIsGeolocationGranted( true )
+      } else {
+        setIsGeolocationGranted( false )
+      }
+    } catch ( err ) {
+      console.log('check error ', err)
+    }
+  }
+
+  async function getGeolocation() {
+    return new Promise( function( resolve, reject ) {
+      if ( !navigator.geolocation ) {
+        reject( new Error("geolocation is not supported"))
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function({coords}) {
+          resolve({
+            lat: coords.latitude,
+            long: coords.longitude
+          })
+        },
+        function( error ) {
+          reject( error )
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000
+        }
+      )
+    })
+  }
+
+  async function getCurrentWeather() {
+    await checkGeolocationPermission()
+
+    if ( isGeolocationGranted ) {
+      try {
+        setIsWeatherDataLoading( true )
+        setWeatherError( null )
+        setWeatherData( null )
+        const weatherAPIKey = import.meta.env.VITE_WEATHER_API_KEY
+  
+        const { lat, long } = await getGeolocation()
+
+        if ( lat && long ) {
+          const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${ lat }&lon=${ long }&appid=${ weatherAPIKey }&units=metric`, {
+            cache: 'no-store'
+          })
+          const forecastResp = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${ lat }&lon=${ long }&appid=${ weatherAPIKey }&units=metric`, {
+            cache: 'no-store'
+          })
+          
+          if ( resp.ok && forecastResp.ok ) {
+            const json = await resp.json()
+            const forecastRespJson = await forecastResp.json()
+
+            setWeatherData( json )
+            setWeatherForecastData( forecastRespJson )
+          } else {
+            setWeatherError( resp.statusText )
+          }
+        }
+      } catch( err ) {
+        setWeatherError( err )
+      } finally {
+        setIsWeatherDataLoading( false )
+      }
+    }
+  }
+
+  async function promptGeolocationPermission() {
+    try {
+      await getGeolocation();
+      await checkGeolocationPermission()
+    } catch ( err ) {
+      setIsGeolocationGranted( false )
+    }
   }
 
   useEffect( function() {
@@ -276,23 +393,27 @@ function Dashboard() {
   }, [session])
 
   useEffect( function() {
-    if ( currentLoggedInUser ) {
+    getCurrentWeather()
+  }, [ isGeolocationGranted ])
+
+  useEffect( function() {
+    if ( currentLoggedInUser.profile_photo_url ) {
       const profilePhotoImage = new Image();
       profilePhotoImage.src = `${currentLoggedInUser.profile_photo_url}`;
       profilePhotoImage.onload = setProfilePhotoLoaded
       profilePhotoImage.onloadstart = setProfilePhotoLoading
       profilePhotoImage.onerror = setProfilePhotoError
     }
-  }, [ currentLoggedInUser ])
+  }, [ currentLoggedInUser.profile_photo_url ])
 
   return (
     // dashboard route container
     <div className="route">
-      {/* <RouteLoader text="loading dashboard.."/> */}
+      { isRouteLoading && <RouteLoader text="loading dashboard.."/>}
 
-      {/* <RouteError text="error loading dashboard"/> */}
+      { routeError && <RouteError text={`error loading dashboard: ${ routeError.message }`} handleRetry={ () => window.location.reload() }/>}
 
-      <div className="dashboard">
+      { ( !isRouteLoading && !routeError ) && <div className="dashboard">
         {/* dashboard navbar */}
         <nav className="dashboard--navbar">
           {/* navbar logo */}
@@ -452,20 +573,21 @@ function Dashboard() {
         <div className="dashboard--summary">
 
           {/* summary data */}
-          <SummaryData
-            location="lagos"
-            temperature="27*C"
-            description='partly cloudy'
-          />
+          { (isGeolocationGranted && weatherData) && <SummaryData
+            iconCode={ weatherData.weather[0].icon }
+            location={ weatherData.name }
+            temperature={ weatherData.main.temp }
+            description={ weatherData.weather[0].description }
+          />}
 
           {/* loading */}
-          {/* <SubLoader text='loading weather data for your location'/> */}
+          { (isGeolocationGranted && isWeatherDataLoading) && <SubLoader text='loading weather data for your location'/>}
           
           {/* error */}
-          {/* <SubError text='error loading location data'/> */}
+          { (isGeolocationGranted && weatherError) && <SubError text={`error loading location data: ${ weatherError.message }`} handleRetry={ getCurrentWeather }/>}
 
           {/* permission not-granted */}
-          {/* <SubPermNotGrant text="you have not granted location access"/> */}
+          { !isGeolocationGranted && <SubPermNotGrant text="you have not granted location access" handleRequest={ promptGeolocationPermission }/>}
         </div>
 
         {/* dashboard sub-heading */}
@@ -476,18 +598,18 @@ function Dashboard() {
         {/* dashboard weather forecast */}
         <div className="dashboard--forecast">
           {/* forecast data */}
-          <ForecastData/>
+          { (isGeolocationGranted && weatherData) && <ForecastData data={ weatherForecastData?.list }/> }
 
           {/* loading */}
-          {/* <SubLoader text='loading weather data for your location'/> */}
+          { (isGeolocationGranted && isWeatherDataLoading) && <SubLoader text='loading weather data for your location'/> }
 
           {/* error */}
-          {/* <SubError text='error loading location data'/> */}
+          { (isGeolocationGranted && weatherError) && <SubError  text={`error loading location data: ${ weatherError.message }`} handleRetry={ getCurrentWeather }/> }
 
           {/* permission not-granted */}
-          {/* <SubPermNotGrant text="you have not granted location access"/> */}
+          { !isGeolocationGranted && <SubPermNotGrant text="you have not granted location access" handleRequest={ promptGeolocationPermission }/> }
         </div>
-      </div>
+      </div>}
 
       {/* update password dialog */}
       <DialogComponent 
