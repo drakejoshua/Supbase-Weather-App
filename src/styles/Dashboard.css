@@ -116,13 +116,18 @@
     outline: none;
     flex-grow: 1;
 }
+.dashboard--searchbar__search-input::placeholder {
+    text-transform: capitalize;
+    color: var(--brand-black);
+    opacity: 0.4;
+}
 .dashboard--searchbar__search-dropdown-ctn {
     position: relative;
     top: 10px;
 }
 .dashboard--searchbar__search-dropdown {
     width: 100%;
-    background-color: var(--brand-black);
+    background-color: var(--brand-white);
     position: absolute;
     top: 0;
     border-radius: 10px;
@@ -133,8 +138,6 @@
     display: flex;
     flex-direction: column;
     list-style: none;
-    display: flex;
-    flex-direction: column;
     gap: 3px;
     padding: 10px;
 }
@@ -146,31 +149,35 @@
     border-radius: 8px;
 }
 .dashboard--searchbar__search-dropdown-result:hover {
-    background-color: var(--brand-white);
-    color: var(--brand-black)
+    background-color: var(--brand-black);
+    color: var(--brand-white)
 }
 .dashboard--searchbar__search-dropdown-result:hover * {
-    color: var(--brand-black);
-    fill: var(--brand-black);
+    color: var(--brand-white);
+    fill: var(--brand-white);
 }
 .dashboard--searchbar__search-result-icon {
     font-size: 1.3rem;
-    color: var(--brand-white);
-    fill: var(--brand-white);
+    color: var(--brand-black);
+    fill: var(--brand-black);
+    pointer-events: none;
 }
 .dashboard--searchbar__search-result-group {
     display: flex;
     flex-direction: column;
+    pointer-events: none;
 }
 .dashboard--searchbar__search-result-info {
-    color: var(--brand-white);
+    color: var(--brand-black);
     text-transform: capitalize;
+    pointer-events: none;
 }
 .dashboard--searchbar__search-result-city {
-    color: var(--brand-white);
+    color: var(--brand-black);
     text-transform: capitalize;
     font-size: 1.2rem;
     font-weight: 700;
+    pointer-events: none;
 }
 .dashboard--searchbar__search-dropdown-loader,
 .dashboard--searchbar__search-dropdown-error,
@@ -181,7 +188,7 @@
     justify-content: center;
     gap: 20px;
     align-items: center;
-    color: var(--brand-white);
+    color: var(--brand-black);
     font-weight: 600;
     font-size: 1.1rem;
     text-transform: capitalize;
@@ -190,7 +197,7 @@
 .dashboard--searchbar__search-dropdown-load-icon,
 .dashboard--searchbar__search-dropdown-error-icon,
 .dashboard--searchbar__search-dropdown-not-found-icon {
-    fill: var(--brand-white);
+    fill: var(--brand-black);
     display: block;
     font-size: 1.5rem;
 }

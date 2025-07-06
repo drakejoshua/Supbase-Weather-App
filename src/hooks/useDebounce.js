@@ -9,12 +9,23 @@
  * @returns {*} The debounced value.
  *
  * @example
- * const [search, setSearch] = useState('');
- * const debouncedSearch = useDebounce(search, 300);
+ * // Example 1: Debouncing an input value
+ * const [input, setInput] = useState('');
+ * const debouncedInput = useDebounce(input, 300);
+ * 
+ * <input value={input} onChange={e => setInput(e.target.value)} />
+ * // Use debouncedInput for filtering or validation
  *
+ * @example
+ * // Example 2: Debouncing an API call
+ * const [query, setQuery] = useState('');
+ * const debouncedQuery = useDebounce(query, 500);
+ * 
  * useEffect(() => {
- *   // Trigger API call or filtering with debouncedSearch
- * }, [debouncedSearch]);
+ *   if (debouncedQuery) {
+ *     fetchData(debouncedQuery); // Call API only after debounce
+ *   }
+ * }, [debouncedQuery]);
  */
 
 

@@ -19,6 +19,7 @@ import { useUserProvider } from '../providers/UserProvider'
 import useSupabaseUpload from '../hooks/useSupabaseUpload'
 import supabase from '../providers/SupabaseProvider'
 import Dropzone from 'react-dropzone'
+import useDebounce from '../hooks/useDebounce'
 
 
 function Dashboard() {
@@ -28,6 +29,17 @@ function Dashboard() {
 
   const [ password, setPassword ] = useState("")
   const [ email, setEmail ] = useState("")
+  
+  
+  
+  
+  const [ searchTerm, setSearchTerm ] = useState("")
+  const debouncedSearchTerm = useDebounce( searchTerm )
+  const [ isSearchLoading, setIsSearchLoading ] = useState( true )
+  const [ searchError, setSearchError ] = useState( null )
+  const [ searchData, setSearchData ] = useState( [] )
+  const [ dropdownItemClicked, setDropdownItemClicked ] = useState( false )
+  const [ searchCollapsibleOpen, setSearchCollapsibleOpen ] = useState( false )
 
 
   function setProfilePhotoLoaded() {
@@ -386,6 +398,46 @@ function Dashboard() {
     }
   }
 
+  async function searchLocations() {
+    setSearchCollapsibleOpen( true )
+    
+    try {
+      const weatherAPIKey = import.meta.env.VITE_WEATHER_API_KEY
+
+      if ( debouncedSearchTerm ) {
+        setIsSearchLoading( true )
+        setSearchError( null )
+        setSearchData( [] )
+
+        const resp = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${ debouncedSearchTerm }&appid=${ weatherAPIKey }&limit=10`, {
+          cache: 'no-store'
+        })
+
+        if ( resp.ok ) {
+            const json = await resp.json()
+
+            setSearchData( json )
+        } else {
+          setSearchError( resp.statusText )
+        }
+      }
+    } catch( err ) {
+      setSearchError( err.message )
+    } finally {
+      setIsSearchLoading( false )
+    }
+  }
+
+  async function handleSearchInputBlur(e) {
+    if ( !dropdownItemClicked ) {
+      setSearchCollapsibleOpen( false )
+    }
+  }
+
+  useEffect( function() {
+    searchLocations()
+  }, [ debouncedSearchTerm ])
+
   useEffect( function() {
     if ( session != 'loading' && session ) {
       fetchUserData()
@@ -486,84 +538,66 @@ function Dashboard() {
 
         {/* dashboard searchbar */}
         <div className="dashboard--searchbar">
-          <Collapsible.Root>
-            <Collapsible.Trigger asChild>
-              <div className="dashboard--searchbar__search">
-                <FaMagnifyingGlass className='dashboard--searchbar__search-icon'/>
+          <div className="dashboard--searchbar__search">
+            <FaMagnifyingGlass className='dashboard--searchbar__search-icon'/>
 
-                <input type="text" id="" className="dashboard--searchbar__search-input" />
+            <input 
+              type="text" 
+              className="dashboard--searchbar__search-input" 
+              onBlur={handleSearchInputBlur}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder='search city, zip code, state...'
+            />
 
-                {/* <FaXmark className='dashboard--searchbar__search-icon'/> */}
-              </div>
-            </Collapsible.Trigger>
+            {/* <FaXmark className='dashboard--searchbar__search-icon'/> */}
+          </div>
 
+          <Collapsible.Root open={ searchCollapsibleOpen }>
             <div className="dashboard--searchbar__search-dropdown-ctn">
               <Collapsible.Content className='dashboard--searchbar__search-dropdown'>
                 {/* loading */}
-                {/* <div className="dashboard--searchbar__search-dropdown-loader">
+                { isSearchLoading && <div className="dashboard--searchbar__search-dropdown-loader">
                   <Spinner className='dashboard--searchbar__search-dropdown-load-icon'/>
 
                   loading locations
-                </div> */}
+                </div>}
                 
                 {/* error */}
-                {/* <div className="dashboard--searchbar__search-dropdown-error">
+                { searchError && <div className="dashboard--searchbar__search-dropdown-error">
                   <FaTriangleExclamation className='dashboard--searchbar__search-dropdown-error-icon'/>
 
-                  error loading locations
-                </div> */}
+                  error loading locations: { searchError }
+                </div>}
 
                 {/* not-found */}
-                {/* <div className="dashboard--searchbar__search-dropdown-not-found">
+                { ( debouncedSearchTerm != "" && searchData.length == 0 ) && <div className="dashboard--searchbar__search-dropdown-not-found">
                   <FaListCheck className='dashboard--searchbar__search-dropdown-not-found-icon'/>
 
-                  no locations matching "la" was found
-                </div> */}
+                  no locations matching "{ debouncedSearchTerm }" was found
+                </div>}
 
                 {/* found / search-results */}
-                <ul className="dashboard--searchbar__search-dropdown-result-list">
-                  <li className="dashboard--searchbar__search-dropdown-result">
-                      <FaLocationDot className='dashboard--searchbar__search-result-icon'/>
+                { ( debouncedSearchTerm != "" && searchData.length > 0 ) && <ul className="dashboard--searchbar__search-dropdown-result-list">
+                  { searchData.map( function( location, index ) {
+                      return <li className="dashboard--searchbar__search-dropdown-result" key={ index } 
+                              onMouseDown={ () => setDropdownItemClicked( true )}
+                              onClick={ () => navigateTo(`/view?lat=${ location.lat }&lon=${ location.lon }`) }>
+                                <FaLocationDot className='dashboard--searchbar__search-result-icon'/>
 
-                      <div className="dashboard--searchbar__search-result-group">
-                        <span className="dashboard--searchbar__search-result-city">
-                          nairobi
-                        </span>
-                        
-                        <span className="dashboard--searchbar__search-result-info">
-                          nairobi, kenya
-                        </span>
-                      </div>
-                  </li>
-
-                  <li className="dashboard--searchbar__search-dropdown-result">
-                    <FaLocationDot className='dashboard--searchbar__search-result-icon'/>
-
-                    <div className="dashboard--searchbar__search-result-group">
-                      <span className="dashboard--searchbar__search-result-city">
-                        nairobi
-                      </span>
-                      
-                      <span className="dashboard--searchbar__search-result-info">
-                        nairobi, kenya
-                      </span>
-                    </div>
-                  </li>
-                  
-                  <li className="dashboard--searchbar__search-dropdown-result">
-                    <FaLocationDot className='dashboard--searchbar__search-result-icon'/>
-
-                    <div className="dashboard--searchbar__search-result-group">
-                      <span className="dashboard--searchbar__search-result-city">
-                        nairobi
-                      </span>
-                      
-                      <span className="dashboard--searchbar__search-result-info">
-                        nairobi, kenya
-                      </span>
-                    </div>
-                  </li>
-                </ul>
+                                <div className="dashboard--searchbar__search-result-group">
+                                  <span className="dashboard--searchbar__search-result-city">
+                                    { location.name }
+                                  </span>
+                                  
+                                  <span className="dashboard--searchbar__search-result-info">
+                                    { location.state }, { location.country }
+                                  </span>
+                                </div>
+                          </li>
+                    } )
+                  }
+                </ul>}
               </Collapsible.Content>
             </div>
           </Collapsible.Root>

@@ -32,7 +32,7 @@ function View() {
         </div>
 
         <div className="view--summary">
-          <SummaryData location="lagos" temperature="27*C" description="partly cloudy"/>
+          <SummaryData iconCode={'04d'} location="lagos" temperature="27*C" description="partly cloudy"/>
 
           {/* <SubLoader text="fetching data for this location"/> */}
           {/* <SubError text="error fetching data for the location"/> */}
@@ -43,9 +43,9 @@ function View() {
         </h2>
 
         <div className="view--forecast">
-          <ForecastData/>
+          {/* <ForecastData data={[]}/> */}
 
-          {/* <SubLoader/> */}
+          <SubLoader/>
 
           {/* <SubError/> */}
         </div>
