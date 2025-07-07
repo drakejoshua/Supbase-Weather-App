@@ -378,7 +378,7 @@ function Dashboard() {
             setWeatherData( json )
             setWeatherForecastData( forecastRespJson )
           } else {
-            setWeatherError( resp.statusText )
+            setWeatherError( resp.statusText || forecastResp.statusText )
           }
         }
       } catch( err ) {
@@ -428,7 +428,7 @@ function Dashboard() {
     }
   }
 
-  async function handleSearchInputBlur(e) {
+  async function handleSearchInputBlur() {
     if ( !dropdownItemClicked ) {
       setSearchCollapsibleOpen( false )
     }
@@ -479,8 +479,8 @@ function Dashboard() {
           <div className="dashboard--navbar__buttons">
             {/* theme toggle button */}
             <button className="dashboard--navbar__theme-toggle-btn" onClick={ toggleTheme }>
-              <FaRegSun className='dashboard--navbar__theme-toggle-icon'/>
-              {/* <FaMoon className='dashboard--navbar__theme-toggle-icon'/> */}
+              { theme == 'dark' && <FaRegSun className='dashboard--navbar__theme-toggle-icon'/>}
+              { theme == 'light' && <FaMoon className='dashboard--navbar__theme-toggle-icon'/>}
             </button>
 
             {/* navbar avatar & dropdown */}
