@@ -5,9 +5,14 @@ import { FaClipboardQuestion, FaHeart, FaLinkSlash, FaLocationDot, FaRegHeart, F
 import { useDialogProvider } from '../providers/DialogProvider'
 import RouteLoader from '../components/RouteLoader'
 import RouteError from '../components/RouteError'
+import { useEffect } from 'react'
+import { useAuth } from '../providers/AuthProvider'
+import { useFavouriteProvider } from '../providers/FavouriteProvider'
 
 function Favourites() {
   const { showDialog, hideDialog } = useDialogProvider()
+  const { session } = useAuth()
+  const { favourites, getFavourites, addFavourite } = useFavouriteProvider()
 
   function promptReomveFavourite() {
     showDialog({
@@ -27,6 +32,24 @@ function Favourites() {
   function handleRemoveFavourite() {
     hideDialog()
   }
+
+  async function fetchUserFavourites() {
+    const { success, error, data } = await getFavourites()
+
+    if ( !success ) {
+      console.log('error for favourites, ', error )
+    }
+  }
+
+  // useEffect( function() {
+  //   if ( session != 'loading' && session ) {
+  //     fetchUserFavourites()
+  //   }
+  // }, [ session ])
+
+  // useEffect( function() {
+  //   console.log('user favourites, ', favourites ) 
+  // }, [ favourites ])
 
   return (
     <div className='route'>

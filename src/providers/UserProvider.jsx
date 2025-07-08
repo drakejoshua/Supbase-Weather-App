@@ -14,8 +14,6 @@ function UserProvider({ children }) {
     const { data, error } = await supabase.from('Users')
         .insert( userData )
         .select()
-    
-    console.log( data )
 
     if ( error ) {
         return { error: error, success: false, data: null }

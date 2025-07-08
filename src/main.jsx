@@ -8,6 +8,7 @@ import './index.css'
 import ToastProvider from './providers/ToastProvider.jsx'
 import AuthProvider from './providers/AuthProvider.jsx'
 import UserProvider from './providers/UserProvider.jsx'
+import FavouriteProvider from './providers/FavouriteProvider.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -15,11 +16,13 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider>
       <ToastProvider>
         <DialogProvider>
-          <UserProvider>
-            <AuthProvider>
-              <RouterProvider router={ Routes }/>
-            </AuthProvider>
-          </UserProvider>
+          <AuthProvider>
+            <FavouriteProvider>
+              <UserProvider>
+                <RouterProvider router={ Routes }/>
+              </UserProvider>
+            </FavouriteProvider>
+          </AuthProvider>
         </DialogProvider>
       </ToastProvider>
     </ThemeProvider>
