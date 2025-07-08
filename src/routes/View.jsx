@@ -40,23 +40,19 @@ function View() {
       setWeatherData( null )
       
       const weatherAPIKey = import.meta.env.VITE_WEATHER_API_KEY
-      const lat = searchParams.get('lat')
-      const lon = searchParams.get('lon')
+      const name = searchParams.get('name')
 
-      if ( lat && lon ) {
-        const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${ lat }&lon=${ lon }&appid=${ weatherAPIKey }&units=metric`, {
+      if ( name ) {
+        const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${ name }&appid=${ weatherAPIKey }&units=metric`, {
           cache: 'no-store'
         })
-        const forecastResp = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${ lat }&lon=${ lon }&appid=${ weatherAPIKey }&units=metric`, {
+        const forecastResp = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${ name }&appid=${ weatherAPIKey }&units=metric`, {
           cache: 'no-store'
         })
         
         if ( resp.ok && forecastResp.ok ) {
           const json = await resp.json()
           const forecastRespJson = await forecastResp.json()
-
-          console.log('weather data: ', json)
-          console.log('weather firecast data: ', forecastRespJson)
 
           setWeatherData( json )
           setWeatherForecastData( forecastRespJson )
@@ -75,13 +71,12 @@ function View() {
     try {
       setIsRouteLoading( true )
 
-      const lat = searchParams.get('lat')
-      const lon = searchParams.get('lon')
+      const name = searchParams.get('name')
 
       const { success, error } = await getFavourites()
 
       if ( success ) {
-        if ( lat && lon ) {
+        if ( name ) {
           getCurrentWeather()
         } else {
           setRouteError( new Error('invalid search data'))

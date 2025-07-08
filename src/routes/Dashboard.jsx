@@ -582,7 +582,7 @@ function Dashboard() {
                   { searchData.map( function( location, index ) {
                       return <li className="dashboard--searchbar__search-dropdown-result" key={ index } 
                               onMouseDown={ () => setDropdownItemClicked( true )}
-                              onClick={ () => navigateTo(`/view?lat=${ location.lat }&lon=${ location.lon }`) }>
+                              onClick={ () => navigateTo(`/view?name=${ location.name }`) }>
                                 <FaLocationDot className='dashboard--searchbar__search-result-icon'/>
 
                                 <div className="dashboard--searchbar__search-result-group">
