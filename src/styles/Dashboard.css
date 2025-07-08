@@ -39,6 +39,7 @@
     user-select: none;
     border-radius: 100%;
     overflow: hidden;
+    outline: 3px solid var(--brand-black);
 }
 .dashboard--navbar__avatar-image {
     width: 100%;

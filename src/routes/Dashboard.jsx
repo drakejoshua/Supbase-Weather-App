@@ -591,7 +591,7 @@ function Dashboard() {
                                   </span>
                                   
                                   <span className="dashboard--searchbar__search-result-info">
-                                    { location.state }, { location.country }
+                                    { location.state ? `${ location.state },` : "" } { location.country }
                                   </span>
                                 </div>
                           </li>
