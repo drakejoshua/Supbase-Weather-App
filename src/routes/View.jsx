@@ -1,5 +1,5 @@
 import '../styles/View.css'
-import { FaArrowLeft, FaHeart, FaMoon, FaRegHeart, FaRegSun } from 'react-icons/fa6'
+import { FaHeart, FaRegHeart } from 'react-icons/fa6'
 import SummaryData from '../components/SummaryData'
 import SubLoader from '../components/SubLoader'
 import SubError from '../components/SubError'
@@ -9,12 +9,20 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import RouteError from '../components/RouteError'
 import RouteLoader from '../components/RouteLoader'
+import { useFavouriteProvider } from '../providers/FavouriteProvider'
+import { useToastProvider } from '../providers/ToastProvider'
+import { useDialogProvider } from '../providers/DialogProvider'
 
 
 function View() {
   // route-level state
   const [ isRouteLoading, setIsRouteLoading ] = useState( true )
   const [ routeError, setRouteError ] = useState(null)
+
+  const { favourites, addFavourite, removeFavourite, getFavourites } = useFavouriteProvider()
+
+  const { showToast } = useToastProvider()
+  const { showDialog } = useDialogProvider()
 
   const [ weatherData, setWeatherData ] = useState(null)
   const [ weatherForecastData, setWeatherForecastData ] = useState(null)
@@ -34,7 +42,6 @@ function View() {
       const weatherAPIKey = import.meta.env.VITE_WEATHER_API_KEY
       const lat = searchParams.get('lat')
       const lon = searchParams.get('lon')
-      console.log("lat: ", lat, "lon: ", lon ) 
 
       if ( lat && lon ) {
         const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${ lat }&lon=${ lon }&appid=${ weatherAPIKey }&units=metric`, {
@@ -64,22 +71,88 @@ function View() {
     }
   }
 
-  function fetchSearchData() {
+  async function fetchSearchData() {
     try {
       setIsRouteLoading( true )
 
       const lat = searchParams.get('lat')
       const lon = searchParams.get('lon')
 
-      if ( lat && lon ) {
-        getCurrentWeather()
+      const { success, error } = await getFavourites()
+
+      if ( success ) {
+        if ( lat && lon ) {
+          getCurrentWeather()
+        } else {
+          setRouteError( new Error('invalid search data'))
+        }
       } else {
-        setRouteError( new Error('invalid search data'))
+        setRouteError( error )
       }
+
     } catch( err ) {
       setRouteError( err )
     } finally {
       setIsRouteLoading( false )
+    }
+  }
+
+  function checkIfLocationIsFavourite( lat, lon ) {
+    return favourites.find( function( favourite ) {
+      return favourite.latitude == lat && favourite.longitude == lon
+    })
+  }
+
+  async function toggleFavourite() {
+    try {
+      const favouriteData = checkIfLocationIsFavourite( weatherData.coord.lat, weatherData.coord.lon );
+
+      if ( favouriteData ) {
+        const { success, error } = await removeFavourite( favouriteData.favourite_id )
+
+        if ( success ) {
+          showToast({
+            title: 'Removed from Favourites'
+          })
+        } else {
+          showDialog({
+            title: "Error removing from Favourites",
+            content: <div className="view--dialog__text">
+                There was a problem removing this location from your favourites. Please try again. <br />
+                Error: { error.message }
+            </div>
+          })
+        }
+      } else {
+        const { success, error } = await addFavourite({
+          name: weatherData.name,
+          country: weatherData.sys.country,
+          latitude: weatherData.coord.lat,
+          longitude: weatherData.coord.lon,
+        })
+
+        if ( success ) {
+          showToast({
+            title: 'Added to Favourites'
+          })
+        } else {
+          showDialog({
+            title: "Error adding to Favourites",
+            content: <div className="view--dialog__text">
+                There was a problem removing this location from your favourites. Please try again. <br />
+                Error: { error.message }
+            </div>
+          })
+        }
+      }
+    } catch( err ) {
+      showDialog({
+        title: "Action Failed",
+        content: <div className="view--dialog__text">
+        Sorry, something went wrong while performing this action. Please try again.<br />
+        Error: { err.message }
+        </div>
+      })
     }
   }
 
@@ -104,9 +177,11 @@ function View() {
             { weatherData?.name || 'loading...' }
           </span>
 
-          <button className="view--location-bar__favourite-toggle">
-            <FaHeart className='view--location-bar__favourite-toggle-icon'/>
-            {/* <FaRegHeart className='view--location-bar__favourite-toggle-icon'/> */}
+          <button className="view--location-bar__favourite-toggle" onClick={ toggleFavourite }>
+            { checkIfLocationIsFavourite( weatherData?.coord.lat, weatherData?.coord.lon ) != null &&
+               <FaHeart className='view--location-bar__favourite-toggle-icon'/>}
+            { checkIfLocationIsFavourite( weatherData?.coord.lat, weatherData?.coord.lon ) == null &&
+               <FaRegHeart className='view--location-bar__favourite-toggle-icon'/>}
           </button>
         </div>
 
