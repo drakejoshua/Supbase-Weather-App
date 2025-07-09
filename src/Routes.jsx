@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createHashRouter } from 'react-router-dom'
 import Dashboard from './routes/Dashboard'
 import Favourites from './routes/Favourites'
 import ForgotPassword from './routes/Forgot-Password'
@@ -12,7 +12,7 @@ import EmailConfirmed from './routes/EmailConfirmed'
 
 
 
-export const Routes = createBrowserRouter([
+export const Routes = createHashRouter([
     {
         path: "/",
         element: <ProtectedRoute>

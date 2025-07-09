@@ -19,7 +19,7 @@ createRoot(document.getElementById('root')).render(
           <AuthProvider>
             <FavouriteProvider>
               <UserProvider>
-                <RouterProvider router={ Routes }/>
+                <RouterProvider router={ Routes } basename="./"/>
               </UserProvider>
             </FavouriteProvider>
           </AuthProvider>
