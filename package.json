@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d ./dist --repo https://github.com/drakejoshua/Supbase-Weather-App.git"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.1",
+    "gh-pages": "^6.3.0",
     "radix-ui": "^1.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
