@@ -6,13 +6,17 @@ import { useAuth } from '../providers/AuthProvider'
 import { useToastProvider } from '../providers/ToastProvider'
 import { useDialogProvider } from '../providers/DialogProvider'
 import Spinner from '../components/Spinner'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useUserProvider } from '../providers/UserProvider'
+import supabase from '../providers/SupabaseProvider'
 
 function EmailConfirmed() {
     const [isEmailConfirmed, setIsEmailConfirmed] = useState(false) // set to false to test expired state
 
     const { session, resendEmail } = useAuth()
+    const siteURL = import.meta.env.VITE_SITE_URL
+
+    const [ searchParams, setSearchParams ] = useSearchParams()
 
     const navigateTo = useNavigate()
 
@@ -25,9 +29,14 @@ function EmailConfirmed() {
     const [ loading, setLoading ] = useState( false )
 
     async function handleResendConfirmation() {
-        const { success, error } = await resendEmail('signup', `${window.location.host}/email-confirmed`);
-
         try {
+            const emailToResend = searchParams.get('email')
+
+            if ( !emailToResend ) {
+                throw new Error('resend email not found, try sign-in again')
+            }
+
+            const { success, error } = await resendEmail(emailToResend, 'signup', `${ siteURL }/email-confirmed?email=${ emailToResend }`);
             setLoading( true )
 
             if ( success ) {
@@ -80,11 +89,32 @@ function EmailConfirmed() {
         }
     }
 
+    async function verifyUserConfirmation() {
+        try {
+            const tokenHash = searchParams.get('hash')
+            console.log('token hash: ', tokenHash )
+
+            if ( !tokenHash ) {
+                throw new Error()
+            }
+
+            const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'email'})
+
+            if ( error ) {
+                console.log('eror')
+                throw new Error()
+            } else {
+                console.log('success')
+                setIsEmailConfirmed( true )
+            }
+        } catch( err ) {
+            setIsEmailConfirmed( false )
+        }
+    }
+
     useEffect( function() {
-        if ( session != 'loading' && session ) {
-            setIsEmailConfirmed( true )
-        } 
-    }, [ session ])
+        verifyUserConfirmation()
+    }, [])
 
     useEffect( function() {
         if ( isEmailConfirmed ) {

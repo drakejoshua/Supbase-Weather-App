@@ -48,8 +48,12 @@ function UserProvider({ children }) {
         .select('*')
         .eq('user_id', user_id )
 
-    if ( error  ) {
+    if ( error ) {
         return { success: false, error: error, data: null }
+    }
+    
+    if ( data.length == 0 ) {
+        return { success: false, error: new Error('user data not found'), data: null }
     }
 
     setCurrentLoggedInUser({

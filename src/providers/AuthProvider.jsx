@@ -11,6 +11,8 @@ export function useAuth() {
 function AuthProvider({ children }) {
   const [ session, setSession ] = useState('loading')
 
+  const siteURL = import.meta.env.VITE_SITE_URL
+
   // sign in using email and password
   async function signInUsingEmail( email, password ) {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -31,7 +33,7 @@ function AuthProvider({ children }) {
         email: email,
         password: password,
         options: {
-            emailRedirectTo: `${ window.location.origin }/email-confirmed`
+            emailRedirectTo: `${ siteURL }/email-confirmed?email=${ email }`
         }
     })
 
@@ -43,9 +45,9 @@ function AuthProvider({ children }) {
   }
   
   // sign up using email and password
-  async function resendEmail( type, redirectURL ) {
-    const { error } = await supabase.auth.signUp({
-        email: session.user.email,
+  async function resendEmail( email, type, redirectURL ) {
+    const { error } = await supabase.auth.resend({
+        email: email,
         type: type,
         options: {
           emailRedirectTo: redirectURL
@@ -83,7 +85,7 @@ function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
-            emailRedirectTo: `${ window.location.origin }`,
+            emailRedirectTo: `${ siteURL }`,
             shouldCreateUser: false
         }
     })
@@ -99,7 +101,7 @@ function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${ window.location.origin }/auth-continue`
+          redirectTo: `${ siteURL }/auth-continue`
         }
     })
 
@@ -114,7 +116,7 @@ function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
-          redirectTo: `${ window.location.origin }/auth-continue`
+          redirectTo: `${ siteURL }/auth-continue`
         }
     })
 

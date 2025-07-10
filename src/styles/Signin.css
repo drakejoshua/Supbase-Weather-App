@@ -115,12 +115,17 @@
     text-align: center;
 }
 .signin--form__dialog-btn {
-    margin-top: 15px;
-    padding: 10px 20px;
-    width: 100%;
-    text-align: center;
     background-color: var(--brand-white);
-    color: var(--brand-black);
+    padding: 10px 20px;
+    margin-top: 20px;
+    width: 100%;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
 }
 
 @media screen and ( max-width: 68.75rem ) {

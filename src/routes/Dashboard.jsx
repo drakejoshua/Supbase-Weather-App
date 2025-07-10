@@ -295,12 +295,12 @@ function Dashboard() {
     try {
       setIsRouteLoading( true )
       
-      const { success, error } = await getUserFromSupabase( session.user.id )
+      const { success } = await getUserFromSupabase( session.user.id )
 
       if ( success ) {
         checkGeolocationPermission()
       } else {
-        setRouteError( error )
+        navigateTo(`/rollback`)
       }
     } catch( err ) {
       setRouteError( err )

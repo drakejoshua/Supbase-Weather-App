@@ -9,6 +9,7 @@ import NotFound from './routes/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
 import AuthContinue from './routes/AuthContinue'
 import EmailConfirmed from './routes/EmailConfirmed'
+import Rollback from './routes/Rollback'
 
 
 
@@ -36,6 +37,10 @@ export const Routes = createHashRouter([
     {
         path: "/email-confirmed",
         element: <EmailConfirmed />
+    },
+    {
+        path: "/rollback",
+        element: <Rollback />
     },
     {
         path: "/signin",

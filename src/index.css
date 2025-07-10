@@ -41,6 +41,7 @@
     text-transform: capitalize;
     font-size: 1.3rem;
     font-weight: 600;
+    text-align: center;
 }
 .route-error__retry-btn {
     display: flex;

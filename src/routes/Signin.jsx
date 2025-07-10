@@ -6,24 +6,26 @@ import FormLogo from '../components/FormLogo'
 import FormCarousel from '../components/FormCarousel'
 import GoogleSocialBtn from '../components/GoogleSocialBtn'
 import TwitterSocialBtn from '../components/TwitterSocialBtn'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuth } from '../providers/AuthProvider'
-import { useUserProvider } from '../providers/UserProvider'
 import Spinner from '../components/Spinner'
+import { useToastProvider } from '../providers/ToastProvider'
 
 
 function Signin() {
   // react-router navigate function
   const navigateTo = useNavigate()
 
-  const { getUserFromSupabase } = useUserProvider()
-
   // dialog provider helper function
-  const { showDialog } = useDialogProvider();
+  const { showDialog, hideDialog } = useDialogProvider();
+
+  const { showToast } = useToastProvider()
 
   // auth context and helper functions
-  const { signInUsingEmail } = useAuth()
+  const { signInUsingEmail, resendEmail } = useAuth()
+
+  const siteURL = import.meta.env.VITE_SITE_URL
 
   // input states
   const [ email, setEmail ] = useState("");
@@ -54,7 +56,7 @@ function Signin() {
                             you need to confirm your email before you can login
                           </p>
 
-                          <button className="signin--form__dialog-btn">
+                          <button className="signin--form__dialog-btn button-hover button-hover-white" onClick={ handleResendConfirmation }>
                             send email confirmation
                           </button>
                     </div>
@@ -99,6 +101,36 @@ function Signin() {
       setLoading( false )
     }
 
+  }
+
+  async function handleResendConfirmation() {
+    try {
+        const { success, error } = await resendEmail( email, 'signup', `${ siteURL }/email-confirmed?email=${ email }`);
+
+        if ( success ) {
+            hideDialog()
+
+            showToast({
+                title: 'Email confirmation sent'
+            })
+        } else {
+            showDialog({
+                title: 'Error sending confirmation email',
+                content: <p className="email-confirmed--dialog__text">
+                    there was an error sending the email confirmation link. <br />
+                    Error: { error.message }
+                </p>
+            })
+        }
+    } catch( err ) {
+        showDialog({
+            title: 'Error sending confirmation email',
+            content: <p className="email-confirmed--dialog__text">
+                there was an error sending the email confirmation link. <br />
+                Error: { err.message }
+            </p>
+        })
+    }
   }
 
   return (
